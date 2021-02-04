@@ -25,7 +25,7 @@
         },
         "dnsPrefix": {
             "type": "string",
-            "defaultValue": "public",
+            "defaultValue": "mspropswsunique01",
             "metadata": {
                 "description": "The DNS prefix for the public IP address used by the Load Balancer"
             }
