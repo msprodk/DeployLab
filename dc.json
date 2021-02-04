@@ -18,12 +18,14 @@
         },
         "domainName": {
             "type": "string",
+            "defaultValue": "ps.dom",
             "metadata": {
                 "description": "The FQDN of the AD Domain created "
             }
         },
         "dnsPrefix": {
             "type": "string",
+            "defaultValue": "public",
             "metadata": {
                 "description": "The DNS prefix for the public IP address used by the Load Balancer"
             }
