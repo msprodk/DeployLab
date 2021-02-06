@@ -510,10 +510,6 @@
                 "type": "extensions",
                 "name": "[parameters('adBDCVMName')]",
                 "location": "[resourceGroup().location]",
-                "copy": {
-                  "name": "vmDomainJoinCopy",
-                  "count": "[length(variables('vmListArray'))]"
-                },
                 "dependsOn": [
                     "[resourceId('Microsoft.Compute/virtualMachines', variables('adBDCVMName'))]"
                 ],
