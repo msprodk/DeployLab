@@ -520,7 +520,7 @@
                     "settings": {
                     "Name": "[parameters('domainName')]",
                     "OUPath": "",
-                    "User": "[concat(parameters('domainName'), '\\', parameters('adminUsername')]",
+                    "User": "[parameters('adminUsername')]",
                     "Restart": "true",
                     "Options": "[parameters('domainJoinOptions')]"
                     },
