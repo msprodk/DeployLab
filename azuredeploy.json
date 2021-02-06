@@ -507,10 +507,10 @@
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('dnsLabelPrefix'),'/joindomain')]",
+            "name": "joindomain)]",
             "location": "[parameters('location')]",
             "dependsOn": [
-              "[concat('Microsoft.Compute/virtualMachines/', parameters('dnsLabelPrefix'))]"
+              "[concat('Microsoft.Compute/virtualMachines/', [variables('adBDCVMName')])]"
             ],
             "properties": {
               "publisher": "Microsoft.Compute",
