@@ -4,24 +4,28 @@
     "parameters": {
         "adminUsername": {
             "type": "string",
+            "defaultValue": "Install",
             "metadata": {
                 "description": "The name of the Administrator of the new VM and Domain"
             }
         },
         "adminPassword": {
             "type": "securestring",
+            "defaultValue": "Somepass1234",
             "metadata": {
                 "description": "The password for the Administrator account of the new VM and Domain"
             }
         },
         "domainName": {
             "type": "string",
+            "defaultValue": "ps.dom",
             "metadata": {
                 "description": "The FQDN of the AD Domain created "
             }
         },
         "dnsPrefix": {
             "type": "string",
+            "defaultValue": "mspropswsunique01",
             "metadata": {
                 "description": "The DNS prefix for the public IP address used by the Load Balancer"
             }
@@ -71,26 +75,25 @@
     },
     "variables": {
         "storageAccountType": "Premium_LRS",
-        "adPDCVMName": "PSDC",
-        "adPSMemberServerName": "PSSERVER",
-        "adPSClientName": "PSCLIENT",
+        "adPDCVMName": "adPDC",
+        "adBDCVMName": "adBDC",
         "imagePublisher": "MicrosoftWindowsServer",
         "imageOffer": "WindowsServer",
-        "imageSKU": "2019-Datacenter",
+        "imageSKU": "2016-Datacenter",
         "adAvailabilitySetName": "adAvailabiltySet",
-        "publicIPAddressName": "lb-pip",
+        "publicIPAddressName": "ad-lb-pip",
         "adLBFE": "LBFE",
         "adLBBE": "LBBE",
-        "adPDCRDPNAT": "PDCRDP",
-        "adBDCRDPNAT": "BDCRDP",
-        "virtualNetworkName": "VNET1",
-        "virtualNetworkAddressRange": "10.200.0.0/16",
-        "adSubnetName": "Subnet1",
-        "adSubnet": "10.200.0.0/24",
-        "adPDCNicName": "NicDC",
-        "adPDCNicIPAddress": "10.200.0.4",
-        "adBDCNicName": "NicSERVER",
-        "adBDCNicIPAddress": "10.200.0.5",
+        "adPDCRDPNAT": "adPDCRDP",
+        "adBDCRDPNAT": "adBDCRDP",
+        "virtualNetworkName": "adVNET",
+        "virtualNetworkAddressRange": "10.0.0.0/16",
+        "adSubnetName": "adSubnet",
+        "adSubnet": "10.0.0.0/24",
+        "adPDCNicName": "adPDCNic",
+        "adPDCNicIPAddress": "10.0.0.4",
+        "adBDCNicName": "adBDCNic",
+        "adBDCNicIPAddress": "10.0.0.5",
         "adSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('adSubnetName'))]",
         "adLBName": "adLoadBalancer",
         "adlbFEConfigID": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('adLBName'), variables('adLBFE'))]",
