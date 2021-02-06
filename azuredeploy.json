@@ -520,12 +520,12 @@
                     "settings": {
                     "Name": "[parameters('domainName')]",
                     "OUPath": "",
-                    "User": "[concat([parameters('domainName')], '\\', [parameters('adminUsername')]]",
+                    "User": "[concat(parameters('domainName'), '\\', parameters('adminUsername')]",
                     "Restart": "true",
                     "Options": "[parameters('domainJoinOptions')]"
                     },
                     "protectedSettings": {
-                    "Password": "[parameters('adminPassword')]"
+                    "Password": "[parameters('domainPassword')]"
                     }
                 }
                 }
