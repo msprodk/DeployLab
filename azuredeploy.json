@@ -505,13 +505,15 @@
             }
         },
         {
+            "comments": "Join domain - JsonADDomainExtension",
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('domainName'),'/joindomain')]",
+            "name": "[concat(trim(variables('adBDCVMName')),'/joindomain')]",
             "location": "[parameters('location')]",
-            "dependsOn": [
-              "[concat('Microsoft.Compute/virtualMachines/', variables('adBDCVMName'))]"
-            ],
+            "copy": {
+              "name": "vmDomainJoinCopy",
+              "count": 1
+            },
             "properties": {
               "publisher": "Microsoft.Compute",
               "type": "JsonADDomainExtension",
@@ -519,16 +521,16 @@
               "autoUpgradeMinorVersion": true,
               "settings": {
                 "Name": "[parameters('domainName')]",
-                "OUPath": "",
-                "User": "[concat(parameters('domainName'), '\\', parameters('adminUsername'))]",
+                "User": "[parameters('adminUsername')]",
                 "Restart": "true",
-                "Options": 3
+                "Options": 3,
+                "OUPath": ""
               },
               "protectedSettings": {
                 "Password": "[parameters('domainPassword')]"
               }
             }
-        },        
+          },        
         {
             "name": "UpdateVNetDNS2",
             "type": "Microsoft.Resources/deployments",
