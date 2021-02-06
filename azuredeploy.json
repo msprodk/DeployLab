@@ -510,7 +510,7 @@
             "name": "joindomain)]",
             "location": "[parameters('location')]",
             "dependsOn": [
-              "[concat('Microsoft.Compute/virtualMachines/', [variables('adBDCVMName')])]"
+              "[concat('Microsoft.Compute/virtualMachines/', variables('adBDCVMName'))]"
             ],
             "properties": {
               "publisher": "Microsoft.Compute",
