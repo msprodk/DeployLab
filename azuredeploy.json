@@ -508,7 +508,7 @@
             "comments": "Join domain - JsonADDomainExtension",
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(trim(variables('adBDCVMName')),'/joindomain')]",
+            "name": "adBDC/joindomain",
             "location": "[parameters('location')]",
             "copy": {
               "name": "vmDomainJoinCopy",
@@ -536,7 +536,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', '[concat(trim(variables('adBDCVMName')),'/joindomain')]')]"
+                "[resourceId('Microsoft.Resources/deployments', 'adBDC/joindomain')]"
             ],
             "properties": {
                 "mode": "Incremental",
