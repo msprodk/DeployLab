@@ -508,8 +508,8 @@
                 "comments": "Join domain",
                 "apiVersion": "2019-12-01",
                 "type": "extensions",
-                "name": "[concat(trim(variables('vmListArray')[copyIndex()]),'/joindomain')]",
-                "location": "[parameters('location')]",
+                "name": "[parameters('adBDCVMName')]",
+                "location": "[resourceGroup().location]",
                 "copy": {
                   "name": "vmDomainJoinCopy",
                   "count": "[length(variables('vmListArray'))]"
