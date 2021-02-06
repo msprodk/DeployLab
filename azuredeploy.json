@@ -536,7 +536,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'adBDC/joindomain')]"
+                "[resourceId('Microsoft.Compute/virtualMachines', variables('adBDCVMName'))]"
             ],
             "properties": {
                 "mode": "Incremental",
