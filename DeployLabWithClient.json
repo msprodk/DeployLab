@@ -1,4 +1,4 @@
-{
+adClientNicName{
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -547,7 +547,7 @@
                                 "name": "ipconfig1",
                                 "properties": {
                                     "privateIPAllocationMethod": "Static",
-                                    "privateIPAddress": "[variables('adClientNNicIPAddress')]",
+                                    "privateIPAddress": "[variables('adClientNicIPAddress')]",
                                     "subnet": {
                                         "id": "[variables('adSubnetRef')]"
                                     },
