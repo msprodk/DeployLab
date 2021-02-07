@@ -25,7 +25,7 @@
         
         xDSCDomainjoin JoinDomain
         {
-            Domain     = $Domain 
+            Domain     = $DomainName 
             Credential = $DomainCreds
             #JoinOU     = "CN=Computers,DC=someplace,DC=qld,DC=gov,DC=au"
         }
