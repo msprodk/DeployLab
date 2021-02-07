@@ -75,8 +75,8 @@
     },
     "variables": {
         "storageAccountType": "Premium_LRS",
-        "adPDCVMName": "PSDC",
-        "adBDCVMName": "PSSRV",
+        "adPDCVMName": "adPDC",
+        "adBDCVMName": "adBDC",
         "imagePublisher": "MicrosoftWindowsServer",
         "imageOffer": "WindowsServer",
         "imageSKU": "2016-Datacenter",
