@@ -562,7 +562,7 @@
                                     ],
                                     "loadBalancerInboundNatRules": [
                                         {
-                                            "id": "[variables('adClientNRDPNATRuleID')]"
+                                            "id": "[variables('adClientRDPNATRuleID')]"
                                         }
                                     ]
                                 }
