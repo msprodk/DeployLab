@@ -529,67 +529,6 @@
             }
         },
         {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('adBDCVMName'),'/PrepareBDC')]",
-            "apiVersion": "2019-12-01",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', variables('adBDCVMName'))]"
-            ],
-            "properties": {
-                "publisher": "Microsoft.Powershell",
-                "type": "DSC",
-                "typeHandlerVersion": "2.19",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "ModulesUrl": "[variables('adBDCPreparationModulesURL')]",
-                    "ConfigurationFunction": "[variables('adBDCPreparationFunction')]",
-                    "Properties": {
-                        "DNSServer": "[variables('adPDCNicIPAddress')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "ConfiguringBackupADDomainController",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-09-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('adBDCVMName'),'PrepareBDC')]",
-                "[resourceId('Microsoft.Resources/deployments', 'UpdateBDCNIC')]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('configureADBDCTemplateUri')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "adBDCVMName": {
-                        "value": "[variables('adBDCVMName')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "adminUsername": {
-                        "value": "[parameters('adminUsername')]"
-                    },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
-                    },
-                    "domainName": {
-                        "value": "[parameters('domainName')]"
-                    },
-                    "adBDCConfigurationFunction": {
-                        "value": "[variables('adBDCConfigurationFunction')]"
-                    },
-                    "adBDCConfigurationModulesURL": {
-                        "value": "[variables('adBDCConfigurationModulesURL')]"
-                    }
-                }
-            }
-        },
-        {
             "name": "UpdateVNetDNS2",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
@@ -620,8 +559,7 @@
                     },
                     "DNSServerAddress": {
                         "value": [
-                            "[variables('adPDCNicIPAddress')]",
-                            "[variables('adBDCNicIPAddress')]"
+                            "[variables('adPDCNicIPAddress')]"
                         ]
                     }
                 }
