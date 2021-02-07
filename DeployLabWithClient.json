@@ -88,6 +88,7 @@
         "imagePublisher": "MicrosoftWindowsServer",
         "imageOffer": "WindowsServer",
         "imageSKU": "2019-Datacenter",
+        "imageSKUClient": "windows-10-20h2-vhd-server-prod-stage",
         "adAvailabilitySetName": "adAvailabiltySet",
         "publicIPAddressName": "ad-lb-pip",
         "adLBFE": "LBFE",
@@ -708,7 +709,7 @@
                     "imageReference": {
                         "publisher": "[variables('imagePublisher')]",
                         "offer": "[variables('imageOffer')]",
-                        "sku": "[variables('imageSKU')]",
+                        "sku": "[variables('imageSKUClient')]",
                         "version": "latest"
                     },
                     "osDisk": {
