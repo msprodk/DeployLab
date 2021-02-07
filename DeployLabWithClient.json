@@ -525,7 +525,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
-                "[variables('adCientNicName')]",
+                "[variables('adClientNicName')]",
                 "UpdateVNetDNS1"
             ],
             "properties": {
