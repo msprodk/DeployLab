@@ -103,7 +103,7 @@
         "adPDCNicIPAddress": "10.0.0.4",
         "adBDCNicName": "adBDCNic",
         "adBDCNicIPAddress": "10.0.0.5",
-        "adClientNicName": "adBDCNic",
+        "adClientNicName": "adClientNic",
         "adClientNicIPAddress": "10.0.0.6",
         "adSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('adSubnetName'))]",
         "adLBName": "adLoadBalancer",
