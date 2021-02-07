@@ -94,6 +94,7 @@
         "adLBBE": "LBBE",
         "adPDCRDPNAT": "adPDCRDP",
         "adBDCRDPNAT": "adBDCRDP",
+        "adClientRDPNAT": "adClientRDP",
         "adClientRDPPNAT": "adClientRDP",
         "virtualNetworkName": "adVNET",
         "virtualNetworkAddressRange": "10.0.0.0/16",
@@ -234,7 +235,7 @@
                         }
                     },
                     {
-                        "name": "[variables('adBDCRDPNAT')]",
+                        "name": "[variables('adClientRDPNAT')]",
                         "properties": {
                             "frontendIPConfiguration": {
                                 "id": "[variables('adlbFEConfigID')]"
