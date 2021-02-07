@@ -698,7 +698,7 @@
             }
         },
         {
-            "name": "ConfiguringBackupADDomainController",
+            "name": "ConfiguringClient",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
