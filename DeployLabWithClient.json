@@ -86,6 +86,7 @@
         "adBDCVMName": "PSSRV",
         "adClientVMName": "PSCLIENT",
         "imagePublisher": "MicrosoftWindowsServer",
+        "imagePublisherClient": "MicrosoftWindowsDesktop",
         "imageOffer": "WindowsServer",
         "imageOfferClient": "windows-10-20h2-vhd-client-prod-stage",
         "imageSKU": "2019-Datacenter",
@@ -708,7 +709,7 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[variables('imagePublisher')]",
+                        "publisher": "[variables('imagePublisherClient')]",
                         "offer": "[variables('imageOffer')]",
                         "sku": "[variables('imageSKUClient')]",
                         "version": "latest"
