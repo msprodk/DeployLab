@@ -30,6 +30,17 @@
             Name = "DNS"
         }
 
+        Script EnableDNSDiags
+        {
+      	    SetScript = {
+                Set-DnsServerDiagnostics -All $true
+                Write-Verbose -Verbose "Enabling DNS client diagnostics"
+            }
+            GetScript =  { @{} }
+            TestScript = { $false }
+            DependsOn = "[WindowsFeature]DNS"
+        }
+
         WindowsFeature DnsTools
         {
             Ensure = "Present"
@@ -43,6 +54,19 @@
             InterfaceAlias = $InterfaceAlias
             AddressFamily  = 'IPv4'
             DependsOn = "[WindowsFeature]DNS"
+        }
+
+        xWaitforDisk Disk2
+        {
+            DiskNumber = 2
+            RetryIntervalSec =$RetryIntervalSec
+            RetryCount = $RetryCount
+        }
+
+        xDisk ADDataDisk {
+            DiskNumber = 2
+            DriveLetter = "F"
+            DependsOn = "[xWaitForDisk]Disk2"
         }
 
         WindowsFeature ADDSInstall
@@ -71,10 +95,10 @@
             DomainName = $DomainName
             DomainAdministratorCredential = $DomainCreds
             SafemodeAdministratorPassword = $DomainCreds
-            DatabasePath = "C:\NTDS"
-            LogPath = "C:\NTDS"
-            SysvolPath = "C:\SYSVOL"
-            DependsOn = @("[WindowsFeature]ADDSInstall")
+            DatabasePath = "F:\NTDS"
+            LogPath = "F:\NTDS"
+            SysvolPath = "F:\SYSVOL"
+            DependsOn = @("[WindowsFeature]ADDSInstall", "[xDisk]ADDataDisk")
         }
 
         xPendingReboot RebootAfterPromotion{
