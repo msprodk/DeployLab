@@ -12,7 +12,7 @@
         [Int]$RetryIntervalSec=30
     )
 
-    Import-DscResource -ModuleName xActiveDirectory, xPendingReboot
+    Import-DscResource -ModuleName xActiveDirectory, xPendingReboot, xDSCDomainJoin
 
     [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
 
@@ -23,46 +23,11 @@
             RebootNodeIfNeeded = $true
         }
         
-        xWaitForADDomain DscForestWait
+        xDSCDomainjoin JoinDomain
         {
-            DomainName = $DomainName
-            DomainUserCredential= $DomainCreds
-            RetryCount = $RetryCount
-            RetryIntervalSec = $RetryIntervalSec
+            Domain     = $Domain 
+            Credential = $DomainCreds
+            #JoinOU     = "CN=Computers,DC=someplace,DC=qld,DC=gov,DC=au"
         }
-        xADDomainController BDC
-        {
-            DomainName = $DomainName
-            DomainAdministratorCredential = $DomainCreds
-            SafemodeAdministratorPassword = $DomainCreds
-            DatabasePath = "F:\NTDS"
-            LogPath = "F:\NTDS"
-            SysvolPath = "F:\SYSVOL"
-            DependsOn = "[xWaitForADDomain]DscForestWait"
-        }
-<#
-        Script UpdateDNSForwarder
-        {
-            SetScript =
-            {
-                Write-Verbose -Verbose "Getting DNS forwarding rule..."
-                $dnsFwdRule = Get-DnsServerForwarder -Verbose
-                if ($dnsFwdRule)
-                {
-                    Write-Verbose -Verbose "Removing DNS forwarding rule"
-                    Remove-DnsServerForwarder -IPAddress $dnsFwdRule.IPAddress -Force -Verbose
-                }
-                Write-Verbose -Verbose "End of UpdateDNSForwarder script..."
-            }
-            GetScript =  { @{} }
-            TestScript = { $false}
-            DependsOn = "[xADDomainController]BDC"
-        }
-#>
-        xPendingReboot RebootAfterPromotion {
-            Name = "RebootAfterDCPromotion"
-            DependsOn = "[xADDomainController]BDC"
-        }
-
     }
 }
