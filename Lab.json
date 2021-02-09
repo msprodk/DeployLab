@@ -142,7 +142,7 @@
         "functionPreparationSRV":        "PrepareADBDC.ps1\\PrepareADBDC",
         "functionPreparationCLIENT":     "PrepareADClient.ps1\\PrepareADClient",
 
-        "functionConfigurationDC":       "CreateADPDC.ps1\\CreateADPDC",
+        "functionConfigurationDC":       "ConfigDC.ps1\\ConfigDC",
         "functionConfigurationSRV":      "ConfigureADBDC.ps1\\ConfigureADBDC",
         "functionConfigurationCLIENT":   "ConfigureADClient.ps1\\ConfigureADClient"
     }, 
@@ -264,7 +264,7 @@
                     }
                 ]
             }
-        }, //"Microsoft.Network/networkInterfaces"
+        }, //"Microsoft.Network/networkInterfaces/nicNameDC"
         {
             "name": "[variables('nicNameDC')]",
             "type": "Microsoft.Network/networkInterfaces",
@@ -332,7 +332,7 @@
                     }
                 ]
             }
-        }, //Microsoft.Network/networkInterfaces
+        }, //Microsoft.Network/networkInterfaces/nicNameCLIENT
         {
             "name": "[variables('nicNameCLIENT')]",
             "type": "Microsoft.Network/networkInterfaces",
@@ -385,16 +385,16 @@
                     "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
                 },
                 "osProfile": {
-                    "computerName":  "[variables('vmNameDC')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "computerName":     "[variables('vmNameDC')]",
+                    "adminUsername":    "[parameters('adminUsername')]",
+                    "adminPassword":    "[parameters('adminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[variables('imagePublisherServer')]",
-                        "offer":     "[variables('imageOfferServer')]",
-                        "sku":       "[variables('imageSKU')]",
-                        "version":   "latest"
+                        "publisher":    "[variables('imagePublisherServer')]",
+                        "offer":        "[variables('imageOfferServer')]",
+                        "sku":          "[variables('imageSKU')]",
+                        "version":      "latest"
                     },
                     "osDisk": {
                         "name":         "[concat(variables('vmNameDC'),'_OSDisk')]",
