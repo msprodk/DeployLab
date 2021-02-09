@@ -1,0 +1,372 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "type": "string",
+            "defaultValue": "Install",
+            "metadata": {
+                "description": "The name of the Administrator of the new VM and Domain"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "defaultValue": "Somepass1234",
+            "metadata": {
+                "description": "The password for the Administrator account of the new VM and Domain"
+            }
+        },
+        "domainName": {
+            "type": "string",
+            "defaultValue": "ps.dom",
+            "metadata": {
+                "description": "The FQDN of the AD Domain created "
+            }
+        },
+        "dnsPrefix": {
+            "type": "string",
+            "defaultValue": "msprotest1pub",
+            "metadata": {
+                "description": "The DNS prefix for the public IP address used by the Load Balancer"
+            }
+        },
+        "RDPPortDC": {
+            "type": "int",
+            "metadata": {
+                "description": "The public RDP port for the PDC VM"
+            },
+            "defaultValue": 3389
+        },
+        "RDPPortSrv": {
+            "type": "int",
+            "metadata": {
+                "description": "The public RDP port for the BDC VM"
+            },
+            "defaultValue": 3390
+        },
+        "RDPPortClient": {
+            "type": "int",
+            "metadata": {
+                "description": "The public RDP port for the BDC VM"
+            },
+            "defaultValue": 3391
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The location of resources, such as templates and DSC modules, that the template depends on"
+            },
+            "defaultValue": "[deployment().properties.templateLink.uri]"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Auto-generated token to access _artifactsLocation"
+            },
+            "defaultValue": ""
+        },
+        "ResourceGroup": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "ResourceGroup for all resources."
+            }
+        },
+        "adVMSize": {
+            "type": "string",
+            "defaultValue": "Standard_DS2_v2",
+            "metadata": {
+                "description": "Size for the VM.  This sample uses premium disk and requires an 'S' sku."
+            }
+        }
+    },
+    "variables": {
+        "storageAccountType":            "Premium_LRS",
+        
+        "vmNameDC":                      "PSDC",
+        "vmNameSRV":                     "PSSRV",
+        "vmNameCLIENT":                  "PSCLIENT",
+         
+        "imagePublisherServer":          "MicrosoftWindowsServer",
+        "imageOfferServer":              "WindowsServer",
+        "imageSKU":                      "2019-Datacenter",
+         
+        "imagePublisherClient":          "MicrosoftWindowsDesktop",
+        "imageOfferClient":              "Windows-10",
+        "imageSKUClient":                "20h2-ent",
+        
+        
+        "virtualNetworkName":            "adVNET",
+        "virtualNetworkAddressRange":    "10.0.0.0/16",
+        "adSubnetName":                  "adSubnet",
+        "adSubnet":                      "10.0.0.0/24",
+        "availabilitySetName":           "adAvailabiltySet",
+   
+        "publicIPAddressName":           "pip-lb",
+        "adLBName":                      "lb1",
+        "lbFrontEndname":                "lb-frontend",
+        "lbBackEndname":                 "lb-backend",
+        "natRdpDC":                      "rdpDC",
+        "natRdpSRV":                     "rdpSRV",
+        "natRdpCLIENT":                  "rdpCLIENT",
+   
+        "nicNameDC":                     "nicDC",
+        "nicNameSRV":                    "nicSRV",
+        "nicNameCLIENT":                 "nicCLIENT",
+   
+        "nicIpAddressDC":                "10.0.0.4",
+        "nicIpAddressSRV":               "10.0.0.5",
+        "nicIpAddressCLIENT":            "10.0.0.6",
+
+
+        "SubnetRef":                     "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('adSubnetName'))]",
+        "lbFEConfigID":                  "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('adLBName'), variables('lbFrontEndname'))]",
+        "rdpNATRuleIDDC":                "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('adLBName'), variables('natRdpDC'))]",
+        "rdpNATRuleIDSRV":               "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('adLBName'), variables('natRdpSRV'))]",
+        "rdpNATRuleIDCLIENT":            "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('adLBName'), variables('natRdpCLIENT'))]",
+        "beAddressPoolID":               "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('adLBName'), variables('lbBackEndname'))]",
+
+        "templateUriVnet":               "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/vnet.json', parameters('_artifactsLocationSasToken')))]",
+        "templateUriNIC":                "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/nic.json', parameters('_artifactsLocationSasToken')))]",
+        "templateUriVnetWithDNS":        "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/vnet-with-dns-server.json', parameters('_artifactsLocationSasToken')))]",
+        "templateUriConfigureSRV":       "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/configureADBDC.json', parameters('_artifactsLocationSasToken')))]",
+        "templateUriConfigureCLIENT":    "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/configureADClient.json', parameters('_artifactsLocationSasToken')))]",
+
+        "modulesURLDC":                  "[uri(parameters('_artifactsLocation'), concat('DSC/CreateADPDC.zip', parameters('_artifactsLocationSasToken')))]",
+        "modulesURLPreparationServer":   "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareADBDC.zip', parameters('_artifactsLocationSasToken')))]",
+        "modulesURLPreparationCLIENT":   "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareADClient.zip', parameters('_artifactsLocationSasToken')))]",
+        "modulesURLConfigurationSRV":    "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigureADBDC.zip', parameters('_artifactsLocationSasToken')))]",
+        "modulesURLConfigurationCLIENT": "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigureADClient.zip', parameters('_artifactsLocationSasToken')))]",
+
+
+        "functionPreparationSRV":        "PrepareADBDC.ps1\\PrepareADBDC",
+        "functionPreparationCLIENT":     "PrepareADClient.ps1\\PrepareADClient",
+
+        "functionConfigurationDC":       "CreateADPDC.ps1\\CreateADPDC",
+        "functionConfigurationSRV":      "ConfigureADBDC.ps1\\ConfigureADBDC",
+        "functionConfigurationCLIENT":   "ConfigureADClient.ps1\\ConfigureADClient"
+    }, 
+    "resources": [ //Microsoft.Network/publicIPAddresses/publicIPAddressName
+        {
+            "name": "[variables('publicIPAddressName')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-03-01",
+            "location": "[parameters('ResourceGroup')]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('dnsPrefix')]"
+                }
+            }
+        }, //Microsoft.Compute/availabilitySets/availabilitySetName
+        {
+            "apiVersion": "2019-12-01",
+            "type": "Microsoft.Compute/availabilitySets",
+            "location": "[parameters('ResourceGroup')]",
+            "name": "[variables('availabilitySetName')]",
+            "properties": {
+                "PlatformUpdateDomainCount": 20,
+                "PlatformFaultDomainCount": 2
+            },
+            "sku": {
+                "name": "Aligned"
+            }
+        }, //Microsoft.Resources/deployments/VNet
+        {
+            "name": "VNet",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-09-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('templateUriVnet')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('ResourceGroup')]"
+                    },
+                    "virtualNetworkName": {
+                        "value": "[variables('virtualNetworkName')]"
+                    },
+                    "virtualNetworkAddressRange": {
+                        "value": "[variables('virtualNetworkAddressRange')]"
+                    },
+                    "subnetName": {
+                        "value": "[variables('adSubnetName')]"
+                    },
+                    "subnetRange": {
+                        "value": "[variables('adSubnet')]"
+                    }
+                }
+            }
+        }, //"Microsoft.Network/loadBalancers/adLBName"
+        {
+            "name": "[variables('adLBName')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "apiVersion": "2020-03-01",
+            "location": "[parameters('ResourceGroup')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+            ],
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[variables('lbFrontEndname')]",
+                        "properties": {
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[variables('lbBackEndname')]"
+                    }
+                ],
+                "inboundNatRules": [
+                    {
+                        "name": "[variables('natRdpDC')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('lbFEConfigID')]"
+                            },
+                            "protocol": "Tcp",
+                            "frontendPort": "[parameters('RDPPortDC')]",
+                            "backendPort": 3389,
+                            "enableFloatingIP": false
+                        }
+                    },
+                    {
+                        "name": "[variables('natRdpSRV')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('lbFEConfigID')]"
+                            },
+                            "protocol": "Tcp",
+                            "frontendPort": "[parameters('RDPPortSrv')]",
+                            "backendPort": 3389,
+                            "enableFloatingIP": false
+                        }
+                    },
+                    {
+                        "name": "[variables('natRdpCLIENT')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('lbFEConfigID')]"
+                            },
+                            "protocol": "Tcp",
+                            "frontendPort": "[parameters('RDPPortClient')]",
+                            "backendPort": 3389,
+                            "enableFloatingIP": false
+                        }
+                    }
+                ]
+            }
+        }, //"Microsoft.Network/networkInterfaces"
+        {
+            "name": "[variables('nicNameDC')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-03-01",
+            "location": "[parameters('ResourceGroup')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'VNet')]",
+                "[resourceId('Microsoft.Network/loadbalancers', variables('adLBName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[variables('nicIpAddressDC')]",
+                            "subnet": {
+                                "id": "[variables('SubnetRef')]"
+                            },
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[variables('beAddressPoolID')]"
+                                }
+                            ],
+                            "loadBalancerInboundNatRules": [
+                                {
+                                    "id": "[variables('rdpNATRuleIDDC')]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }, //Microsoft.Network/networkInterfaces/nicNameSRV
+        {
+            "name": "[variables('nicNameSRV')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-03-01",
+            "location": "[parameters('ResourceGroup')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'VNet')]",
+                "[resourceId('Microsoft.Network/loadBalancers', variables('adLBName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[variables('nicIpAddressSRV')]",
+                            "subnet": {
+                                "id": "[variables('SubnetRef')]"
+                            },
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[variables('beAddressPoolID')]"
+                                }
+                            ],
+                            "loadBalancerInboundNatRules": [
+                                {
+                                    "id": "[variables('rdpNATRuleIDSRV')]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }, //Microsoft.Network/networkInterfaces
+        {
+            "name": "[variables('nicNameCLIENT')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-03-01",
+            "location": "[parameters('ResourceGroup')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'VNet')]",
+                "[resourceId('Microsoft.Network/loadBalancers', variables('adLBName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[variables('nicIpAddressCLIENT')]",
+                            "subnet": {
+                                "id": "[variables('SubnetRef')]"
+                            },
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[variables('beAddressPoolID')]"
+                                }
+                            ],
+                            "loadBalancerInboundNatRules": [
+                                {
+                                    "id": "[variables('rdpNATRuleIDCLIENT')]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        } //Microsoft.Compute/virtualMachines/vmNameDC
+
+    ]
+}
