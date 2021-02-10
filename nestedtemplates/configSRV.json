@@ -27,7 +27,7 @@
   "resources": [
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmNameSRV'),'/PrepareBDC')]",
+      "name": "[concat(parameters('Name'),'/PrepareBDC')]",
       "apiVersion": "2019-12-01",
       "location": "[parameters('location')]",
       "properties": {
