@@ -27,7 +27,7 @@
   "resources": [
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmNameCLIENT'),'/PrepareCLIENT')]",
+      "name": "[concat(parameters('Name'),'/PrepareCLIENT')]",
       "apiVersion": "2019-12-01",
       "location": "[parameters('location')]",
       "properties": {
