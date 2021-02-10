@@ -27,7 +27,7 @@
   "resources": [
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('adBDCVMName'),'/PrepareBDC')]",
+      "name": "[concat(parameters('vmNameSRV'),'/PrepareBDC')]",
       "apiVersion": "2019-12-01",
       "location": "[parameters('location')]",
       "properties": {
@@ -36,9 +36,9 @@
         "typeHandlerVersion": "2.21",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "modulesURL": "[parameters('adBDCConfigurationModulesURL')]",
+          "modulesURL": "[parameters('modulesURLConfigurationSRV')]",
           "wmfVersion": "4.0",
-          "configurationFunction": "[parameters('adBDCConfigurationFunction')]",
+          "configurationFunction": "[parameters('functionConfigurationSRV')]",
           "properties": {
             "domainName": "[parameters('domainName')]",
             "adminCreds": {

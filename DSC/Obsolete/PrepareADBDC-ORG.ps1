@@ -1,4 +1,4 @@
-﻿configuration PrepareADBDC
+﻿configuration PrepareSRV
 {
    param
     (
