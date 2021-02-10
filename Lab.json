@@ -113,9 +113,9 @@
         "nicNameSRV":                    "nic-SRV",
         "nicNameCLIENT":                 "nic-CLIENT",
    
-        "nicIpAddressDC":                "10.0.0.4",
-        "nicIpAddressSRV":               "10.0.0.5",
-        "nicIpAddressCLIENT":            "10.0.0.6",
+        "nicIpAddressDC":                "10.200.0.4",
+        "nicIpAddressSRV":               "10.200.0.5",
+        "nicIpAddressCLIENT":            "10.200.0.6",
 
 
         "SubnetRef":                     "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
