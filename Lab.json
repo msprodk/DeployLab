@@ -82,7 +82,6 @@
     },
     "variables": {
         "storageAccountType":            "Premium_LRS",
-        
         "vmNameDC":                      "PSDC",
         "vmNameSRV":                     "PSSRV",
         "vmNameCLIENT":                  "PSCLIENT",
@@ -132,19 +131,19 @@
         "templateUriConfigureSRV":       "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/configureADBDC.json', parameters('_artifactsLocationSasToken')))]",
         "templateUriConfigureCLIENT":    "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/configureADClient.json', parameters('_artifactsLocationSasToken')))]",
 
-        "modulesURLDC":                  "[uri(parameters('_artifactsLocation'), concat('DSC/CreateADPDC.zip', parameters('_artifactsLocationSasToken')))]",
-        "modulesURLPreparationServer":   "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareADBDC.zip', parameters('_artifactsLocationSasToken')))]",
-        "modulesURLPreparationCLIENT":   "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareADClient.zip', parameters('_artifactsLocationSasToken')))]",
-        "modulesURLConfigurationSRV":    "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigureADBDC.zip', parameters('_artifactsLocationSasToken')))]",
-        "modulesURLConfigurationCLIENT": "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigureADClient.zip', parameters('_artifactsLocationSasToken')))]",
+        "modulesURLDC":                  "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigDC.zip', parameters('_artifactsLocationSasToken')))]",
+        "modulesURLPreparationServer":   "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareSRV.zip', parameters('_artifactsLocationSasToken')))]",
+        "modulesURLPreparationCLIENT":   "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareCLIENT.zip', parameters('_artifactsLocationSasToken')))]",
+        "modulesURLConfigurationSRV":    "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigSRV.zip', parameters('_artifactsLocationSasToken')))]",
+        "modulesURLConfigurationCLIENT": "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigCLIENT.zip', parameters('_artifactsLocationSasToken')))]",
 
 
-        "functionPreparationSRV":        "PrepareADBDC.ps1\\PrepareADBDC",
-        "functionPreparationCLIENT":     "PrepareADClient.ps1\\PrepareADClient",
+        "functionPreparationSRV":        "PrepareSRV.ps1\\PrepareSRV",
+        "functionPreparationCLIENT":     "PrepareCLIENT.ps1\\PrepareCLIENT",
 
         "functionConfigurationDC":       "ConfigDC.ps1\\ConfigDC",
-        "functionConfigurationSRV":      "ConfigureADBDC.ps1\\ConfigureADBDC",
-        "functionConfigurationCLIENT":   "ConfigureADClient.ps1\\ConfigureADClient"
+        "functionConfigurationSRV":      "ConfigSRV.ps1\\ConfigSRV",
+        "functionConfigurationCLIENT":   "ConfigCLIENT.ps1\\ConfigCLIENT"
     }, 
     "resources": [ //Microsoft.Network/publicIPAddresses/publicIPAddressName
         {
