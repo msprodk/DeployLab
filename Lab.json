@@ -96,18 +96,18 @@
         
         
         "virtualNetworkName":            "vnVNET1",
-        "virtualNetworkAddressRange":    "10.0.0.0/16",
+        "virtualNetworkAddressRange":    "10.200.0.0/24",
         "subnetName":                    "Subnet1",
-        "cidr":                          "10.0.0.0/24",
+        "cidr":                          "10.200.0.0/24",
         "availabilitySetName":           "as-availabiltyset1",
    
         "publicIPAddressName":           "pip-lb",
-        "adLBName":                      "lb1",
+        "adLBName":                      "lb-lb1",
         "lbFrontEndname":                "lb-frontend",
         "lbBackEndname":                 "lb-backend",
-        "natRdpDC":                      "rdpDC",
-        "natRdpSRV":                     "rdpSRV",
-        "natRdpCLIENT":                  "rdpCLIENT",
+        "natRdpDC":                      "rdp-DC",
+        "natRdpSRV":                     "rdp-SRV",
+        "natRdpCLIENT":                  "rdp-CLIENT",
    
         "nicNameDC":                     "nic-DC",
         "nicNameSRV":                    "nic-SRV",
@@ -411,47 +411,15 @@
                         }
                     ]
                 }
-            },
-            "resources": [
-                {
-                    "name": "CreateADForest",
-                    "type": "extensions",
-                    "apiVersion": "2019-12-01",
-                    "location": "[parameters('ResourceGroup')]",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', variables('vmNameDC'))]"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.Powershell",
-                        "type": "DSC",
-                        "typeHandlerVersion": "2.19",
-                        "autoUpgradeMinorVersion": true,
-                        "settings": {
-                            "ModulesUrl": "[variables('modulesURLDC')]",
-                            "ConfigurationFunction": "[variables('functionConfigurationDC')]",
-                            "Properties": {
-                                "DomainName": "[parameters('domainName')]",
-                                "AdminCreds": {
-                                    "UserName": "[parameters('adminUsername')]",
-                                    "Password": "PrivateSettingsRef:AdminPassword"
-                                }
-                            }
-                        },
-                        "protectedSettings": {
-                            "Items": {
-                                "AdminPassword": "[parameters('adminPassword')]"
-                            }
-                        }
-                    }
-                }
-            ]
+            }
         }, //Microsoft.Resources/deployments/UpdateVNetDNS1
         {
             "name": "UpdateVNetDNS",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
-                "CreateADForest"
+                "[resourceId('Microsoft.Compute/virtualMachines', variables('vmNameDC'))]"
+                //"CreateADForest"
             ],
             "properties": {
                 "mode": "Incremental",
