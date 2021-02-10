@@ -97,8 +97,8 @@
         
         "virtualNetworkName":            "vnVNET1",
         "virtualNetworkAddressRange":    "10.0.0.0/16",
-        "adSubnetName":                  "adSubnet",
-        "adSubnet":                      "10.0.0.0/24",
+        "subnetName":                    "Subnet1",
+        "cidr":                          "10.0.0.0/24",
         "availabilitySetName":           "as-availabiltyset1",
    
         "publicIPAddressName":           "pip-lb",
@@ -118,7 +118,7 @@
         "nicIpAddressCLIENT":            "10.0.0.6",
 
 
-        "SubnetRef":                     "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('adSubnetName'))]",
+        "SubnetRef":                     "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
         "lbFEConfigID":                  "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('adLBName'), variables('lbFrontEndname'))]",
         "rdpNATRuleIDDC":                "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('adLBName'), variables('natRdpDC'))]",
         "rdpNATRuleIDSRV":               "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('adLBName'), variables('natRdpSRV'))]",
@@ -192,10 +192,10 @@
                         "value": "[variables('virtualNetworkAddressRange')]"
                     },
                     "subnetName": {
-                        "value": "[variables('adSubnetName')]"
+                        "value": "[variables('subnetName')]"
                     },
                     "subnetRange": {
-                        "value": "[variables('adSubnet')]"
+                        "value": "[variables('cidr')]"
                     }
                 }
             }
@@ -470,10 +470,10 @@
                         "value": "[variables('virtualNetworkAddressRange')]"
                     },
                     "subnetName": {
-                        "value": "[variables('adSubnetName')]"
+                        "value": "[variables('subnetName')]"
                     },
                     "subnetRange": {
-                        "value": "[variables('adSubnet')]"
+                        "value": "[variables('cidr')]"
                     },
                     "DNSServerAddress": {
                         "value": [
