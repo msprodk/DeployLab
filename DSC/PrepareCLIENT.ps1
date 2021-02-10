@@ -1,4 +1,4 @@
-﻿configuration PrepareADClient
+﻿configuration PrepareClient
 {
    param
     (
