@@ -95,7 +95,7 @@
         "imageSKUClient":                "20h2-ent",
         
         
-        "virtualNetworkName":            "vnVNET1",
+        "virtualNetworkName":            "vn-VNET1",
         "virtualNetworkAddressRange":    "10.200.0.0/24",
         "subnetName":                    "Subnet1",
         "cidr":                          "10.200.0.0/24",
