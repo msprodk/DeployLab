@@ -1,147 +1,4 @@
-, //Microsoft.Resources/deployments/UpdateVNetDNS1
-        {
-            "name": "UpdateVNetDNS",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-09-01",
-            "dependsOn": [
-                "CreateADForest"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('templateUriVnetWithDNS')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[parameters('ResourceGroup')]"
-                    },
-                    "virtualNetworkName": {
-                        "value": "[variables('virtualNetworkName')]"
-                    },
-                    "virtualNetworkAddressRange": {
-                        "value": "[variables('virtualNetworkAddressRange')]"
-                    },
-                    "subnetName": {
-                        "value": "[variables('adSubnetName')]"
-                    },
-                    "subnetRange": {
-                        "value": "[variables('adSubnet')]"
-                    },
-                    "DNSServerAddress": {
-                        "value": [
-                            "[variables('nicIpAddressDC')]"
-                        ]
-                    }
-                }
-            }
-        }, //Microsoft.Resources/deployments/UpdateNICSRV
-        {
-            "name": "UpdateNICSRV",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-09-01",
-            "dependsOn": [
-                "[variables('nicNameSRV')]",
-                "UpdateVNetDNS"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('templateUriNIC')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[parameters('ResourceGroup')]"
-                    },
-                    "nicName": {
-                        "value": "[variables('nicNameSRV')]"
-                    },
-                    "ipConfigurations": {
-                        "value": [
-                            {
-                                "name": "ipconfig1",
-                                "properties": {
-                                    "privateIPAllocationMethod": "Static",
-                                    "privateIPAddress": "[variables('nicIpAddressSRV')]",
-                                    "subnet": {
-                                        "id": "[variables('SubnetRef')]"
-                                    },
-                                    "loadBalancerBackendAddressPools": [
-                                        {
-                                            "id": "[variables('beAddressPoolID')]"
-                                        }
-                                    ],
-                                    "loadBalancerInboundNatRules": [
-                                        {
-                                            "id": "[variables('rdpNATRuleIDSRV')]"
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
-                    },
-                    "dnsServers": {
-                        "value": [
-                            "[variables('nicIpAddressDC')]"
-                        ]
-                    }
-                }
-            }
-        }, //Microsoft.Resources/deployments/UpdateNICCLIENT
-        {
-            "name": "UpdateNICCLIENT",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-09-01",
-            "dependsOn": [
-                "[variables('nicNameCLIENT')]",
-                "UpdateVNetDNS"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('templateUriNIC')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[parameters('ResourceGroup')]"
-                    },
-                    "nicName": {
-                        "value": "[variables('nicNameCLIENT')]"
-                    },
-                    "ipConfigurations": {
-                        "value": [
-                            {
-                                "name": "ipconfig1",
-                                "properties": {
-                                    "privateIPAllocationMethod": "Static",
-                                    "privateIPAddress": "[variables('nicIpAddressCLIENT')]",
-                                    "subnet": {
-                                        "id": "[variables('SubnetRef')]"
-                                    },
-                                    "loadBalancerBackendAddressPools": [
-                                        {
-                                            "id": "[variables('beAddressPoolID')]"
-                                        }
-                                    ],
-                                    "loadBalancerInboundNatRules": [
-                                        {
-                                            "id": "[variables('rdpNATRuleIDCLIENT')]"
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
-                    },
-                    "dnsServers": {
-                        "value": [
-                            "[variables('nicIpAddressDC')]"
-                        ]
-                    }
-                }
-            }
-        }, //Microsoft.Compute/virtualMachines/vmNameSRV
+, //Microsoft.Compute/virtualMachines/vmNameSRV
         {
             "name": "[variables('vmNameSRV')]",
             "type": "Microsoft.Compute/virtualMachines",
@@ -226,7 +83,7 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "vmNameSRV": {
+                    "Name": {
                         "value": "[variables('vmNameSRV')]"
                     },
                     "location": {
@@ -241,10 +98,10 @@
                     "domainName": {
                         "value": "[parameters('domainName')]"
                     },
-                    "functionConfigurationSRV": {
+                    "ConfigFunction": {
                         "value": "[variables('functionConfigurationSRV')]"
                     },
-                    "modulesURLConfigurationSRV": {
+                    "ConfigModulesURL": {
                         "value": "[variables('modulesURLConfigurationSRV')]"
                     }
                 }
@@ -334,7 +191,7 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "vmName": {
+                    "Name": {
                         "value": "[variables('vmNameCLIENT')]"
                     },
                     "location": {
@@ -349,10 +206,10 @@
                     "domainName": {
                         "value": "[parameters('domainName')]"
                     },
-                    "functionConfigurationSRV": {
+                    "ConfigFunction": {
                         "value": "[variables('functionConfigurationCLIENT')]"
                     },
-                    "modulesURLConfigurationSRV": {
+                    "ConfigModulesURL": {
                         "value": "[variables('modulesURLConfigurationCLIENT')]"
                     }
                 }
