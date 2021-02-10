@@ -128,8 +128,8 @@
         "templateUriVnet":               "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/vnet.json', parameters('_artifactsLocationSasToken')))]",
         "templateUriNIC":                "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/nic.json', parameters('_artifactsLocationSasToken')))]",
         "templateUriVnetWithDNS":        "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/vnet-with-dns-server.json', parameters('_artifactsLocationSasToken')))]",
-        "templateUriConfigureSRV":       "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/configureADBDC.json', parameters('_artifactsLocationSasToken')))]",
-        "templateUriConfigureCLIENT":    "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/configureADClient.json', parameters('_artifactsLocationSasToken')))]",
+        "templateUriConfigureSRV":       "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/configSRV.json', parameters('_artifactsLocationSasToken')))]",
+        "templateUriConfigureCLIENT":    "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/configCLIENT.json', parameters('_artifactsLocationSasToken')))]",
 
         "modulesURLDC":                  "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigDC.zip', parameters('_artifactsLocationSasToken')))]",
         "modulesURLPreparationServer":   "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareSRV.zip', parameters('_artifactsLocationSasToken')))]",
