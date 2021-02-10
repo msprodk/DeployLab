@@ -673,7 +673,7 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "vmNameSRV": {
+                    "Name": {
                         "value": "[variables('vmNameSRV')]"
                     },
                     "location": {
@@ -688,10 +688,10 @@
                     "domainName": {
                         "value": "[parameters('domainName')]"
                     },
-                    "functionConfigurationSRV": {
+                    "ConfigFunction": {
                         "value": "[variables('functionConfigurationSRV')]"
                     },
-                    "modulesURLConfigurationSRV": {
+                    "ConfigModulesURL": {
                         "value": "[variables('modulesURLConfigurationSRV')]"
                     }
                 }
@@ -781,7 +781,7 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "vmName": {
+                    "Name": {
                         "value": "[variables('vmNameCLIENT')]"
                     },
                     "location": {
@@ -796,10 +796,10 @@
                     "domainName": {
                         "value": "[parameters('domainName')]"
                     },
-                    "functionConfigurationSRV": {
+                    "ConfigFunction": {
                         "value": "[variables('functionConfigurationCLIENT')]"
                     },
-                    "modulesURLConfigurationSRV": {
+                    "ConfigModulesURL": {
                         "value": "[variables('modulesURLConfigurationCLIENT')]"
                     }
                 }
