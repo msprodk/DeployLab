@@ -1,6 +1,6 @@
 , //Microsoft.Resources/deployments/UpdateVNetDNS1
         {
-            "name": "UpdateVNetDNS1",
+            "name": "UpdateVNetDNS",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
@@ -35,14 +35,14 @@
                     }
                 }
             }
-        }, //Microsoft.Resources/deployments/UpdateBDCNIC
+        }, //Microsoft.Resources/deployments/UpdateNICSRV
         {
-            "name": "UpdateBDCNIC",
+            "name": "UpdateNICSRV",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
                 "[variables('nicNameSRV')]",
-                "UpdateVNetDNS1"
+                "UpdateVNetDNS"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -88,14 +88,14 @@
                     }
                 }
             }
-        }, //Microsoft.Resources/deployments/UpdateClientNIC
+        }, //Microsoft.Resources/deployments/UpdateNICCLIENT
         {
-            "name": "UpdateClientNIC",
+            "name": "UpdateNICCLIENT",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
                 "[variables('nicNameCLIENT')]",
-                "UpdateVNetDNS1"
+                "UpdateVNetDNS"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -136,7 +136,7 @@
                     },
                     "dnsServers": {
                         "value": [
-                            "[variables('nicIpAddressCLIENT')]"
+                            "[variables('nicIpAddressDC')]"
                         ]
                     }
                 }
@@ -188,10 +188,10 @@
                     ]
                 }
             }
-        }, //Microsoft.Compute/virtualMachines/extensions/vmNameSRV/PrepareBDC
+        }, //Microsoft.Compute/virtualMachines/extensions/vmNameSRV/PrepareSRV
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('vmNameSRV'),'/PrepareBDC')]",
+            "name": "[concat(variables('vmNameSRV'),'/PrepareSRV')]",
             "apiVersion": "2019-12-01",
             "location": "[parameters('ResourceGroup')]",
             "dependsOn": [
@@ -210,14 +210,14 @@
                     }
                 }
             }
-        }, //Microsoft.Resources/deployments/ConfiguringBackupADDomainController
+        }, //Microsoft.Resources/deployments/ConfigSRV
         {
-            "name": "ConfiguringBackupADDomainController",
+            "name": "ConfigSRV",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmNameSRV'),'PrepareBDC')]",
-                "[resourceId('Microsoft.Resources/deployments', 'UpdateBDCNIC')]"
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmNameSRV'),'PrepareSRV')]",
+                "[resourceId('Microsoft.Resources/deployments', 'UpdateNICSRV')]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -318,14 +318,14 @@
                     }
                 }
             }
-        }, //Microsoft.Resources/deployments/ConfiguringClient
+        }, //Microsoft.Resources/deployments/ConfigClient
         {
-            "name": "ConfiguringClient",
+            "name": "ConfigClient",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmNameCLIENT'),'PrepareClient')]",
-                "[resourceId('Microsoft.Resources/deployments', 'UpdateClientNIC')]"
+                "[resourceId('Microsoft.Resources/deployments', 'UpdateNICCLIENT')]"
             ],
             "properties": {
                 "mode": "Incremental",
