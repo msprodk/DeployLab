@@ -141,7 +141,7 @@
         "functionPreparationSRV":        "PrepareSRV.ps1\\PrepareSRV",
         "functionPreparationCLIENT":     "PrepareCLIENT.ps1\\PrepareCLIENT",
 
-        "functionConfigurationDC":       "ConfigDC.ps1\\ConfigDC",
+        "functionConfigurationDC":       "ConfigDC.ps1\\ConfigurationDC",
         "functionConfigurationSRV":      "ConfigSRV.ps1\\ConfigSRV",
         "functionConfigurationCLIENT":   "ConfigCLIENT.ps1\\ConfigCLIENT"
     }, 
