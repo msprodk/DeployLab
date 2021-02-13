@@ -1,4 +1,4 @@
-﻿configuration ConfigurationADBDC
+﻿configuration ConfigurationSRV
 {
    param
     (
