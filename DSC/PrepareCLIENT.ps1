@@ -31,6 +31,7 @@
             Address        = $DNSServer
             InterfaceAlias = $InterfaceAlias
             AddressFamily  = 'IPv4'
+            DependsOn      = "[PowerShellExecutionPolicy]ExecutionPolicyLocalMachine"
         }
    }
 }
