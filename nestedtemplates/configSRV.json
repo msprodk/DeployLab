@@ -20,7 +20,7 @@
     "ConfigFunction": {
       "type": "string"
     },
-    "ConfigModulesURL": {
+    "ModulesUrl": {
       "type": "string"
     }
   },
@@ -36,9 +36,9 @@
         "typeHandlerVersion": "2.21",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "modulesURL": "[parameters('modulesURLConfigurationSRV')]",
+          "modulesURL": "[parameters('ModulesUrl')]",
           "wmfVersion": "4.0",
-          "configurationFunction": "[parameters('functionConfigurationSRV')]",
+          "configurationFunction": "[parameters('ConfigFunction')]",
           "properties": {
             "domainName": "[parameters('domainName')]",
             "adminCreds": {
