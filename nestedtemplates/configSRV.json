@@ -20,7 +20,7 @@
     "ConfigFunction": {
       "type": "string"
     },
-    "ModulesUrl": {
+    "ConfigModulesURL": {
       "type": "string"
     }
   },
