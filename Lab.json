@@ -138,12 +138,12 @@
         "modulesURLConfigurationCLIENT": "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigCLIENT.zip', parameters('_artifactsLocationSasToken')))]",
 
 
-        "functionPreparationSRV":        "PrepareSRV.ps1\\PrepareSRV",
-        "functionPreparationCLIENT":     "PrepareCLIENT.ps1\\PrepareCLIENT",
+        "functionPreparationSRV":        "PrepareSRV.ps1\\PreparationSRV",
+        "functionPreparationCLIENT":     "PrepareCLIENT.ps1\\PreparationCLIENT",
 
         "functionConfigurationDC":       "ConfigDC.ps1\\ConfigurationDC",
-        "functionConfigurationSRV":      "ConfigSRV.ps1\\ConfigSRV",
-        "functionConfigurationCLIENT":   "ConfigCLIENT.ps1\\ConfigCLIENT"
+        "functionConfigurationSRV":      "ConfigSRV.ps1\\ConfigurationSRV",
+        "functionConfigurationCLIENT":   "ConfigCLIENT.ps1\\ConfigurationCLIENT"
     }, 
     "resources": [ //Microsoft.Network/publicIPAddresses/publicIPAddressName
         {

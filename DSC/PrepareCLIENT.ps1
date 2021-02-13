@@ -1,4 +1,4 @@
-﻿configuration PrepareClient
+﻿configuration PreparationClient
 {
    param
     (

@@ -1,4 +1,4 @@
-﻿configuration PrepareSRV
+﻿configuration PreparationSRV
 {
    param
     (
