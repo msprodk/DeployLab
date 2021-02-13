@@ -1,94 +1,19 @@
-﻿configuration ConfigurationDC
+﻿configuration ConfigurationImportGPOs
 {
    param
    (
-        [Parameter(Mandatory)]
-        [String]$DomainName,
+   )
 
-        [Parameter(Mandatory)]
-        [System.Management.Automation.PSCredential]$Admincreds
-    )
+    Import-DscResource -ModuleName xActiveDirectory, PSDesiredStateConfiguration
+    
+    $guid = '2FC4BFD9-09E6-441F-A64C-F9E76D4065FE'
+    $name = 'GPExecPol'
 
-    Import-DscResource -ModuleName xActiveDirectory, xStorage, xNetworking, PSDesiredStateConfiguration, xPendingReboot
-    [System.Management.Automation.PSCredential]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
-    $interface      = Get-NetAdapter | Where-Object {$_.Name -Like "Ethernet*"} | Select-Object -First 1
-    $interfaceAlias = $($interface.Name)
+    New-Item -ItemType Directory -Path C:\GPOs -ErrorAction SilentlyContinue
+    Invoke-WebRequest -Uri https://github.com/msprodk/DeployLab/raw/main/GPOs/%7B2FC4BFD9-09E6-441F-A64C-F9E76D4065FE%7D.zip -OutFile c:\GPOs\PSExecPol.zip
+    Start-Sleep -Seconds 5
+    Expand-Archive -Path c:\GPOs\PSExecPol.zip -DestinationPath c:\GPOs
 
-    Node localhost
-    {
-        LocalConfigurationManager
-        {
-            RebootNodeIfNeeded = $true
-        }
+    Import-GPO -BackupId $guid -Path C:\GPOs\ -TargetName $name -CreateIfNeeded
 
-        WindowsFeature DNS
-        {
-            Ensure = "Present"
-            Name   = "DNS"
-        }
-
-        <#Script EnableDNSDiags
-        {
-      	    SetScript = {
-                Set-DnsServerDiagnostics -All $true
-                Write-Verbose -Verbose "Enabling DNS client diagnostics"
-            }
-            GetScript  =  { @{} }
-            TestScript = { $false }
-            DependsOn  = "[WindowsFeature]DNS"
-        }#>
-
-        WindowsFeature DnsTools
-        {
-            Ensure    = "Present"
-            Name      = "RSAT-DNS-Server"
-            DependsOn = "[WindowsFeature]DNS"
-        }
-
-        xDnsServerAddress DnsServerAddress
-        {
-            Address        = '127.0.0.1'
-            InterfaceAlias = $interfaceAlias
-            AddressFamily  = 'IPv4'
-            DependsOn      = "[WindowsFeature]DNS"
-        }
-
-        WindowsFeature ADDSInstall
-        {
-            Ensure    = "Present"
-            Name      = "AD-Domain-Services"
-            DependsOn ="[WindowsFeature]DNS"
-        }
-
-        WindowsFeature ADDSTools
-        {
-            Ensure    = "Present"
-            Name      = "RSAT-ADDS-Tools"
-            DependsOn = "[WindowsFeature]ADDSInstall"
-        }
-
-        WindowsFeature ADAdminCenter
-        {
-            Ensure    = "Present"
-            Name      = "RSAT-AD-AdminCenter"
-            DependsOn = "[WindowsFeature]ADDSTools"
-        }
-
-        xADDomain FirstDS
-        {
-            DomainName                    = $DomainName
-            DomainAdministratorCredential = $DomainCreds
-            SafemodeAdministratorPassword = $DomainCreds
-            DependsOn                     = @("[WindowsFeature]ADDSInstall")
-            #DatabasePath = "C:\NTDS"
-            #LogPath      = "C:\NTDS"
-            #SysvolPath   = "C:\SYSVOL"
-        }
-
-        xPendingReboot RebootAfterPromotion{
-            Name      = "RebootAfterPromotion"
-            DependsOn = "[xADDomain]FirstDS"
-        }
-
-   }
 }
