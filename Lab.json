@@ -797,7 +797,6 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmNameCLIENT'),'PrepareClient')]",
                 "[resourceId('Microsoft.Resources/deployments', 'UpdateNICCLIENT')]",
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', 'UpdateNICCLIENT')]"
             ],
