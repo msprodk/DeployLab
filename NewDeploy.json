@@ -409,10 +409,10 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "[parameters('adVMSize')]"
+                    "vmSize":           "[parameters('adVMSize')]"
                 },
                 "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]"
+                    "id":               "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]"
                 },
                 "osProfile": {
                     "computerName":     "[variables('vmDCName')]",
@@ -438,419 +438,42 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmDCNicName'))]"
-                        }
-                    ]
-                }
-            },
-            "resources": [
-                {
-                    "name": "CreateADForest",
-                    "type": "extensions",
-                    "apiVersion": "2019-12-01",
-                    "location": "[parameters('ResourceGroup')]",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', variables('vmDCName'))]"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.Powershell",
-                        "type": "DSC",
-                        "typeHandlerVersion": "2.19",
-                        "autoUpgradeMinorVersion": true,
-                        "settings": {
-                            "ModulesUrl": "[variables('vmDCModulesURL')]",
-                            "ConfigurationFunction": "[variables('vmDCFunctionConfiguration')]",
-                            "Properties": {
-                                "DomainName": "[parameters('domainName')]",
-                                "AdminCreds": {
-                                    "UserName": "[parameters('adminUsername')]",
-                                    "Password": "PrivateSettingsRef:AdminPassword"
-                                }
-                            }
-                        },
-                        "protectedSettings": {
-                            "Items": {
-                                "AdminPassword": "[parameters('adminPassword')]"
-                            }
-                        }
-                    }
-                }             
-            ]
-        },
-        //Microsoft.Resources/deployments/UpdateVNetDNS1
-        {
-            "name": "UpdateVNetDNS",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-09-01",
-            "dependsOn": [
-                //"[resourceId('Microsoft.Compute/virtualMachines', variables('vmDCName'))]"
-                "CreateADForest"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('netTemplateUriVnetWithDNS')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[parameters('ResourceGroup')]"
-                    },
-                    "virtualNetworkName": {
-                        "value": "[variables('netVnetName')]"
-                    },
-                    "virtualNetworkAddressRange": {
-                        "value": "[variables('netVnetCIDR')]"
-                    },
-                    "subnetName": {
-                        "value": "[variables('netSubnetName')]"
-                    },
-                    "subnetRange": {
-                        "value": "[variables('netSubnetCIDR')]"
-                    },
-                    "DNSServerAddress": {
-                        "value": [
-                            "[variables('vmDCNicIPAddress')]"
-                        ]
-                    }
-                }
-            }
-        },
-        //Microsoft.Resources/deployments/UpdateNICSRV
-        {
-            "name": "UpdateNICSRV",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-09-01",
-            "dependsOn": [
-                "[variables('vmSRVNicName')]",
-                "UpdateVNetDNS"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('netTemplateUriNIC')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[parameters('ResourceGroup')]"
-                    },
-                    "nicName": {
-                        "value": "[variables('vmSRVNicName')]"
-                    },
-                    "ipConfigurations": {
-                        "value": [
-                            {
-                                "name": "ipconfig1",
-                                "properties": {
-                                    "privateIPAllocationMethod": "Static",
-                                    "privateIPAddress": "[variables('vmSRVNicIPAddress')]",
-                                    "subnet": {
-                                        "id": "[variables('netSubnetRef')]"
-                                    },
-                                    "loadBalancerBackendAddressPools": [
-                                        {
-                                            "id": "[variables('lbBackEndAddressPoolID')]"
-                                        }
-                                    ],
-                                    "loadBalancerInboundNatRules": [
-                                        {
-                                            "id": "[variables('vmSRVRdpNATRuleID')]"
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
-                    },
-                    "dnsServers": {
-                        "value": [
-                            "[variables('vmDCNicIPAddress')]"
-                        ]
-                    }
-                }
-            }
-        },
-        //Microsoft.Resources/deployments/UpdateNICCLIENT
-        {
-            "name": "UpdateNICCLIENT",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-09-01",
-            "dependsOn": [
-                "[variables('vmCLIENTNicName')]",
-                "UpdateVNetDNS"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('netTemplateUriNIC')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[parameters('ResourceGroup')]"
-                    },
-                    "nicName": {
-                        "value": "[variables('vmCLIENTNicName')]"
-                    },
-                    "ipConfigurations": {
-                        "value": [
-                            {
-                                "name": "ipconfig1",
-                                "properties": {
-                                    "privateIPAllocationMethod": "Static",
-                                    "privateIPAddress": "[variables('vmCLIENTNicIPAddress')]",
-                                    "subnet": {
-                                        "id": "[variables('netSubnetRef')]"
-                                    },
-                                    "loadBalancerBackendAddressPools": [
-                                        {
-                                            "id": "[variables('lbBackEndAddressPoolID')]"
-                                        }
-                                    ],
-                                    "loadBalancerInboundNatRules": [
-                                        {
-                                            "id": "[variables('vmCLIENTdpNATRuleID')]"
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
-                    },
-                    "dnsServers": {
-                        "value": [
-                            "[variables('vmDCNicIPAddress')]"
-                        ]
-                    }
-                }
-            }
-        },
-        
-        //SRV
-
-        //Microsoft.Compute/virtualMachines/vmSRVName
-        {
-            "name": "[variables('vmSRVName')]",
-            "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2019-12-01",
-            "location": "[parameters('ResourceGroup')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmSRVNicName'))]",
-                "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]",
-                "[resourceId('Microsoft.Network/loadBalancers', variables('lbName'))]"
-            ],
-            "properties": {
-                "hardwareProfile": {
-                    "vmSize": "[parameters('adVMSize')]"
-                },
-                "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]"
-                },
-                "osProfile": {
-                    "computerName": "[variables('vmSRVName')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
-                },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "[variables('vmSRVImagePublisher')]",
-                        "offer": "[variables('vmSRVImageOffer')]",
-                        "sku": "[variables('vmSRVImageSKU')]",
-                        "version": "latest"
-                    },
-                    "osDisk": {
-                        "name": "[concat(variables('vmSRVName'),'_osdisk')]",
-                        "caching": "ReadWrite",
-                        "createOption": "FromImage",
-                        "managedDisk": {
-                            "storageAccountType": "[variables('saType')]"
-                        }
-                    }
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('vmSRVNicName'))]"
+                            "id":       "[resourceId('Microsoft.Network/networkInterfaces', variables('vmDCNicName'))]"
                         }
                     ]
                 }
             }
         },
-        //Microsoft.Compute/virtualMachines/extensions/vmSRVName/PrepareSRV
         {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('vmSRVName'),'/PrepareSRV')]",
-            "apiVersion": "2019-12-01",
-            "location": "[parameters('ResourceGroup')]",
+            "name":                          "[concat(variables('vmSRVName'),'CreateADForest')]",
+            "type":                          "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion":                    "2019-12-01",
+            "location":                      "[parameters('ResourceGroup')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', variables('vmSRVName'))]"
+                "[resourceId('Microsoft.Compute/virtualMachines', variables('vmDCName'))]"
             ],
             "properties": {
-                "publisher": "Microsoft.Powershell",
-                "type": "DSC",
-                "typeHandlerVersion": "2.19",
-                "autoUpgradeMinorVersion": true,
+                "publisher":                 "Microsoft.Powershell",
+                "type":                      "DSC",
+                "typeHandlerVersion":        "2.19",
+                "autoUpgradeMinorVersion":   true,
                 "settings": {
-                    "ModulesUrl": "[variables('vmSRVModulesURLPreparation')]",
-                    "ConfigurationFunction": "[variables('vmSRVFunctionPreparation')]",
+                    "ModulesUrl":            "[variables('vmDCModulesURL')]",
+                    "ConfigurationFunction": "[variables('vmDCFunctionConfiguration')]",
                     "Properties": {
-                        "DNSServer": "[variables('vmDCNicIPAddress')]"
-                    }
-                }
-            }
-        },
-        //Microsoft.Resources/deployments/ConfigSRV
-        {
-            "name": "ConfigSRV",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-09-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmSRVName'),'PrepareSRV')]",
-                "[resourceId('Microsoft.Resources/deployments', 'UpdateNICSRV')]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('vmSRVTemplateUriConfigure')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "Name": {
-                        "value": "[variables('vmSRVName')]"
-                    },
-                    "location": {
-                        "value": "[parameters('ResourceGroup')]"
-                    },
-                    "adminUsername": {
-                        "value": "[parameters('adminUsername')]"
-                    },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
-                    },
-                    "domainName": {
-                        "value": "[parameters('domainName')]"
-                    },
-                    "ConfigFunction": {
-                        "value": "[variables('vmSRVFunctionConfiguration')]"
-                    },
-                    "ConfigModulesURL": {
-                        "value": "[variables('vmSRVModulesURLConfiguration')]"
-                    }
-                }
-            }
-        },
-
-        //CLIENT
-
-        //Microsoft.Compute/virtualMachines/vmCLIENTName
-        {
-            "name": "[variables('vmCLIENTName')]",
-            "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2019-12-01",
-            "location": "[parameters('ResourceGroup')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmCLIENTNicName'))]",
-                "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]",
-                "[resourceId('Microsoft.Network/loadBalancers', variables('lbName'))]"
-            ],
-            "properties": {
-                "hardwareProfile": {
-                    "vmSize": "[parameters('adVMSize')]"
-                },
-                "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]"
-                },
-                "osProfile": {
-                    "computerName": "[variables('vmCLIENTName')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
-                },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "[variables('vmCLIENTImagePublisher')]",
-                        "offer": "[variables('vmCLIENTImageOffer')]",
-                        "sku": "[variables('vmCLIENTImageSKU')]",
-                        "version": "latest"
-                    },
-                    "osDisk": {
-                        "name": "[concat(variables('vmCLIENTName'),'_osdisk')]",
-                        "caching": "ReadWrite",
-                        "createOption": "FromImage",
-                        "managedDisk": {
-                            "storageAccountType": "[variables('saType')]"
+                        "DomainName":        "[parameters('domainName')]",
+                        "AdminCreds": {
+                            "UserName":      "[parameters('adminUsername')]",
+                            "Password":      "PrivateSettingsRef:AdminPassword"
                         }
                     }
                 },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('vmCLIENTNicName'))]"
-                        }
-                    ]
-                }
-            }
-        },
-        //Microsoft.Compute/virtualMachines/extensions/vmCLIENTName/PrepareClient
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('vmCLIENTName'),'/PrepareClient')]",
-            "apiVersion": "2019-12-01",
-            "location": "[parameters('ResourceGroup')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', variables('vmCLIENTName'))]"
-            ],
-            "properties": {
-                "publisher": "Microsoft.Powershell",
-                "type": "DSC",
-                "typeHandlerVersion": "2.19",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "ModulesUrl": "[variables('vmCLIENTModulesURLPreparation')]",
-                    "ConfigurationFunction": "[variables('vmCLIENTFunctionPreparation')]",
-                    "Properties": {
-                        "DNSServer": "[variables('vmDCNicIPAddress')]"
+                "protectedSettings": {
+                    "Items": {
+                        "AdminPassword":     "[parameters('adminPassword')]"
                     }
                 }
             }
-        },
-        //Microsoft.Resources/deployments/ConfigClient
-        {
-            "name": "ConfigClient",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-09-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'UpdateNICCLIENT')]",
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmCLIENTName'), 'PrepareCLIENT')]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('vmCLIENTTemplateUriConfigure')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "Name": {
-                        "value": "[variables('vmCLIENTName')]"
-                    },
-                    "location": {
-                        "value": "[parameters('ResourceGroup')]"
-                    },
-                    "adminUsername": {
-                        "value": "[parameters('adminUsername')]"
-                    },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
-                    },
-                    "domainName": {
-                        "value": "[parameters('domainName')]"
-                    },
-                    "ConfigFunction": {
-                        "value": "[variables('vmCLIENTFunctionConfiguration')]"
-                    },
-                    "ConfigModulesURL": {
-                        "value": "[variables('vmCLIENTModulesURLConfiguration')]"
-                    }
-                }
-            }
-        }
+        }  
     ]
 }
