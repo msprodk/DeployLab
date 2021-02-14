@@ -5,7 +5,7 @@
             "apiVersion": "2019-09-01",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', 'UpdateNICCLIENT')]",
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', 'UpdateNICCLIENT')]"
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmNameCLIENT'), 'PrepareCLIENT'))]"
             ],
             "properties": {
                 "mode": "Incremental",
