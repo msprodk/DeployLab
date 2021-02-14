@@ -9,7 +9,13 @@
         [System.Management.Automation.PSCredential]$Admincreds
     )
 
-    Import-DscResource -ModuleName xActiveDirectory, xStorage, xNetworking, PSDesiredStateConfiguration, xPendingReboot
+    Import-DscResource -ModuleName xActiveDirectory
+    Import-DscResource -ModuleName xStorage
+    Import-DscResource -ModuleName xNetworking
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
+    Import-DscResource -ModuleName xPendingReboot
+    Import-DscResource -ModuleName MSPRO_GPO
+
     [System.Management.Automation.PSCredential]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
     $interface      = Get-NetAdapter | Where-Object {$_.Name -Like "Ethernet*"} | Select-Object -First 1
     $interfaceAlias = $($interface.Name)
@@ -67,13 +73,15 @@
             DependsOn = "[WindowsFeature]ADDSInstall"
         }
 
+        <#
         WindowsFeature ADAdminCenter
         {
             Ensure    = "Present"
             Name      = "RSAT-AD-AdminCenter"
             DependsOn = "[WindowsFeature]ADDSTools"
         }
-
+        #>
+        
         xADDomain FirstDS
         {
             DomainName                    = $DomainName
@@ -85,10 +93,22 @@
             #SysvolPath   = "C:\SYSVOL"
         }
 
-        xPendingReboot RebootAfterPromotion{
+        xPendingReboot RebootAfterPromotion
+        {
             Name      = "RebootAfterPromotion"
             DependsOn = "[xADDomain]FirstDS"
         }
+
+        ImportGPO ConfigurePSExecutionPolicy
+        {
+            Ensure      = 'Present'
+            DomainCreds = $DomainCreds
+            Name        = 'PSExecPol'
+            GUID        = '2FC4BFD9-09E6-441F-A64C-F9E76D4065FE'
+            
+            DependsOn   = '[xPendingReboot]RebootAfterPromotion'
+        }
+        
 
    }
 }
