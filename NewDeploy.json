@@ -94,60 +94,75 @@
         "osimageSKUClient":                "20h2-ent",
           
         //Networks  
-        "netVnetName":                     "vn-VNET1",
+        "netVnetName":                     "net-vn-VNET1",
         "netVnetCIDR":                     "10.200.0.0/24",
-        "netSubnetName":                   "Subnet1",
+        "netSubnetName":                   "net-Subnet1",
         "netSubnetCIDR":                   "10.200.0.0/24",
-        "netAvailabilitySetName":          "as-availabiltyset1",
+        "netAvailabilitySetName":          "net-as-availabiltyset1",
         "netSubnetRef":                    "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('netVnetName'), variables('netSubnetName'))]",
         "netTemplateUriVnet":              "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/vnet.json', parameters('_artifactsLocationSasToken')))]",
         "netTemplateUriNIC":               "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/nic.json', parameters('_artifactsLocationSasToken')))]",
         "netTemplateUriVnetWithDNS":       "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/vnet-with-dns-server.json', parameters('_artifactsLocationSasToken')))]",
 
         //Load Balancer
-        "lbPublicIPAddressName":           "pip-lb",
-        "lbName":                          "lb-lb1",
-        "lbFrontEndname":                  "lb-frontend",
-        "lbBackEndname":                   "lb-backend",
+        "lbName":                          "net-lb-lb1",
+        "lbFrontEndname":                  "net-lb-frontend",
+        "lbBackEndname":                   "net-lb-backend",
+        "lbPublicIPAddressName":           "net-lb-pip",
         "lbFEConfigID":                    "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('lbName'), variables('lbFrontEndname'))]",
         "lbBackEndAddressPoolID":          "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('lbName'), variables('lbBackEndname'))]",
 
         //Domain Controller
-        "vmNameDC":                        "PSDC",
-        "vmNatRdpDC":                      "rdp-DC",
-        "vmNicNameDC":                     "nic-DC",
-        "vmNicIpAddressDC":                "10.200.0.4",
-        "vmRdpNATRuleIDDC":                "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('lbName'), variables('vmNatRdpDC'))]",
-        "vmModulesURLDC":                  "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigDC.zip', parameters('_artifactsLocationSasToken')))]",
-        "vmFunctionConfigurationDC":       "ConfigDC.ps1\\ConfigurationDC",
+        "vmDCName":                        "PSDC",
+        "vmDCImagePublisher":              "MicrosoftWindowsServer",
+        "vmDCImageOffer":                  "WindowsServer",
+        "vmDCImageSKU":                    "2019-Datacenter",
+        "vmDCNatRdp":                      "DC-rdp",
+        "vmDCNicName":                     "DC-nic",
+        "vmDCNicIPAddress":                "10.200.0.4",
+        "vmDCRdpNATRuleID":                "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('lbName'), variables('vmDCNatRdp'))]",
+        "vmDCModulesURL":                  "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigDC.zip', parameters('_artifactsLocationSasToken')))]",
+        "vmDCFunctionConfiguration":       "ConfigDC.ps1\\ConfigurationDC",
 
         //Server
-        "vmNameSRV":                       "PSSRV",
-        "vmNatRdpSRV":                     "rdp-SRV",
-        "vmNicNameSRV":                    "nic-SRV",
-        "vmNicIPAddressSRV":               "10.200.0.5",
-        "vmRdpNATRuleIDSRV":               "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('lbName'), variables('vmNatRdpSRV'))]",
-        "vmModulesURLPreparationServer":   "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareSRV.zip', parameters('_artifactsLocationSasToken')))]",
-        "vmTemplateUriConfigureSRV":       "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/configSRV.json', parameters('_artifactsLocationSasToken')))]",
-        "vmModulesURLConfigurationSRV":    "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigSRV.zip', parameters('_artifactsLocationSasToken')))]",
-        "vmFunctionPreparationSRV":        "PrepareSRV.ps1\\PreparationSRV",
-        "vmFunctionConfigurationSRV":      "ConfigSRV.ps1\\ConfigurationSRV",
+        "vmSRVName":                       "PSSRV",
+        "vmSRVImagePublisher":             "MicrosoftWindowsServer",
+        "vmSRVImageOffer":                 "WindowsServer",
+        "vmSRVImageSKU":                   "2019-Datacenter",
+        "vmSRVNatRdp":                     "SRV-rdp",
+        "vmSRVNicName":                    "SRV-nic",
+        "vmSRVNicIPAddress":               "10.200.0.5",
+        "vmSRVRdpNATRuleID":               "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('lbName'), variables('vmSRVNatRdp'))]",
+        "vmSRVModulesURLPreparation":      "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareSRV.zip', parameters('_artifactsLocationSasToken')))]",
+        "vmSRVTemplateUriConfigure":       "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/configSRV.json', parameters('_artifactsLocationSasToken')))]",
+        "vmSRVModulesURLConfiguration":    "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigSRV.zip', parameters('_artifactsLocationSasToken')))]",
+        "vmSRVFunctionPreparation":        "PrepareSRV.ps1\\PreparationSRV",
+        "vmSRVFunctionConfiguration":      "ConfigSRV.ps1\\ConfigurationSRV",
 
         //Client
-        "vmNameCLIENT":                    "PSADM",
-        "vmNatRdpCLIENT":                  "rdp-CLIENT",
-        "vmNicNameCLIENT":                 "nic-CLIENT",
-        "vmNicIPAddressCLIENT":            "10.200.0.6",
-        "vmRdpNATRuleIDCLIENT":            "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('lbName'), variables('vmNatRdpCLIENT'))]",
-        "vmModulesURLPreparationCLIENT":   "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareCLIENT.zip', parameters('_artifactsLocationSasToken')))]",
-        "vmModulesURLConfigurationCLIENT": "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigCLIENT.zip', parameters('_artifactsLocationSasToken')))]",
-        "vmTemplateUriConfigureCLIENT":    "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/configCLIENT.json', parameters('_artifactsLocationSasToken')))]",
-        "vmFunctionPreparationCLIENT":     "PrepareCLIENT.ps1\\PreparationCLIENT",
-        "vmFunctionConfigurationCLIENT":   "ConfigCLIENT.ps1\\ConfigurationCLIENT"
+        "vmCLIENTName":                    "PSADM",
+        "vmCLIENTImagePublisher":          "MicrosoftWindowsServer",
+        "vmCLIENTImageOffer":              "WindowsServer",
+        "vmCLIENTImageSKU":                "2019-Datacenter",
+        "vmCLIENTNatRdp":                  "CLIENT-rdp",
+        "vmCLIENTNicName":                 "CLIENT-nic",
+        "vmCLIENTNicIPAddress":            "10.200.0.6",
+        "vmCLIENTdpNATRuleID":             "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('lbName'), variables('vmCLIENTNatRdp'))]",
+        "vmCLIENTModulesURLPreparation":   "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareCLIENT.zip', parameters('_artifactsLocationSasToken')))]",
+        "vmCLIENTModulesURLConfiguration": "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigCLIENT.zip', parameters('_artifactsLocationSasToken')))]",
+        "vmCLIENTTemplateUriConfigure":    "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/configCLIENT.json', parameters('_artifactsLocationSasToken')))]",
+        "vmCLIENTFunctionPreparation":     "PrepareCLIENT.ps1\\PreparationCLIENT",
+        "vmCLIENTFunctionConfiguration":   "ConfigCLIENT.ps1\\ConfigurationCLIENT"
 
 
     }, 
-    "resources": [ //Microsoft.Network/publicIPAddresses/lbPublicIPAddressName
+    "resources": [ 
+
+        //---------------------------------------
+        //Azure Networks
+        //---------------------------------------
+        
+        //Microsoft.Network/publicIPAddresses/lbPublicIPAddressName
         {
             "name": "[variables('lbPublicIPAddressName')]",
             "type": "Microsoft.Network/publicIPAddresses",
@@ -159,7 +174,8 @@
                     "domainNameLabel": "[parameters('dnsPrefix')]"
                 }
             }
-        }, //Microsoft.Compute/availabilitySets/netAvailabilitySetName
+        },
+        //Microsoft.Compute/availabilitySets/netAvailabilitySetName
         {
             "apiVersion": "2019-12-01",
             "type": "Microsoft.Compute/availabilitySets",
@@ -172,7 +188,8 @@
             "sku": {
                 "name": "Aligned"
             }
-        }, //Microsoft.Resources/deployments/VNet
+        },
+        //Microsoft.Resources/deployments/VNet
         {
             "name": "VNet",
             "type": "Microsoft.Resources/deployments",
@@ -201,7 +218,8 @@
                     }
                 }
             }
-        }, //"Microsoft.Network/loadBalancers/lbName"
+        },
+        //"Microsoft.Network/loadBalancers/lbName"
         {
             "name": "[variables('lbName')]",
             "type": "Microsoft.Network/loadBalancers",
@@ -228,7 +246,7 @@
                 ],
                 "inboundNatRules": [
                     {
-                        "name": "[variables('vmNatRdpDC')]",
+                        "name": "[variables('vmDCNatRdp')]",
                         "properties": {
                             "frontendIPConfiguration": {
                                 "id": "[variables('lbFEConfigID')]"
@@ -240,7 +258,7 @@
                         }
                     },
                     {
-                        "name": "[variables('vmNatRdpSRV')]",
+                        "name": "[variables('vmSRVNatRdp')]",
                         "properties": {
                             "frontendIPConfiguration": {
                                 "id": "[variables('lbFEConfigID')]"
@@ -252,7 +270,7 @@
                         }
                     },
                     {
-                        "name": "[variables('vmNatRdpCLIENT')]",
+                        "name": "[variables('vmCLIENTNatRdp')]",
                         "properties": {
                             "frontendIPConfiguration": {
                                 "id": "[variables('lbFEConfigID')]"
@@ -265,9 +283,10 @@
                     }
                 ]
             }
-        }, //"Microsoft.Network/networkInterfaces/vmNicNameDC"
+        },
+        //"Microsoft.Network/networkInterfaces/vmDCNicName"
         {
-            "name": "[variables('vmNicNameDC')]",
+            "name": "[variables('vmDCNicName')]",
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2020-03-01",
             "location": "[parameters('ResourceGroup')]",
@@ -281,7 +300,7 @@
                         "name": "ipconfig1",
                         "properties": {
                             "privateIPAllocationMethod": "Static",
-                            "privateIPAddress": "[variables('vmNicIpAddressDC')]",
+                            "privateIPAddress": "[variables('vmDCNicIPAddress')]",
                             "subnet": {
                                 "id": "[variables('netSubnetRef')]"
                             },
@@ -292,16 +311,17 @@
                             ],
                             "loadBalancerInboundNatRules": [
                                 {
-                                    "id": "[variables('vmRdpNATRuleIDDC')]"
+                                    "id": "[variables('vmDCRdpNATRuleID')]"
                                 }
                             ]
                         }
                     }
                 ]
             }
-        }, //Microsoft.Network/networkInterfaces/vmNicNameSRV
+        },
+        //Microsoft.Network/networkInterfaces/vmSRVNicName
         {
-            "name": "[variables('vmNicNameSRV')]",
+            "name": "[variables('vmSRVNicName')]",
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2020-03-01",
             "location": "[parameters('ResourceGroup')]",
@@ -315,7 +335,7 @@
                         "name": "ipconfig1",
                         "properties": {
                             "privateIPAllocationMethod": "Static",
-                            "privateIPAddress": "[variables('vmNicIPAddressSRV')]",
+                            "privateIPAddress": "[variables('vmSRVNicIPAddress')]",
                             "subnet": {
                                 "id": "[variables('netSubnetRef')]"
                             },
@@ -326,16 +346,17 @@
                             ],
                             "loadBalancerInboundNatRules": [
                                 {
-                                    "id": "[variables('vmRdpNATRuleIDSRV')]"
+                                    "id": "[variables('vmSRVRdpNATRuleID')]"
                                 }
                             ]
                         }
                     }
                 ]
             }
-        }, //Microsoft.Network/networkInterfaces/vmNicNameCLIENT
+        },
+        //Microsoft.Network/networkInterfaces/vmCLIENTNicName
         {
-            "name": "[variables('vmNicNameCLIENT')]",
+            "name": "[variables('vmCLIENTNicName')]",
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2020-03-01",
             "location": "[parameters('ResourceGroup')]",
@@ -349,7 +370,7 @@
                         "name": "ipconfig1",
                         "properties": {
                             "privateIPAllocationMethod": "Static",
-                            "privateIPAddress": "[variables('vmNicIPAddressCLIENT')]",
+                            "privateIPAddress": "[variables('vmCLIENTNicIPAddress')]",
                             "subnet": {
                                 "id": "[variables('netSubnetRef')]"
                             },
@@ -360,21 +381,29 @@
                             ],
                             "loadBalancerInboundNatRules": [
                                 {
-                                    "id": "[variables('vmRdpNATRuleIDCLIENT')]"
+                                    "id": "[variables('vmCLIENTdpNATRuleID')]"
                                 }
                             ]
                         }
                     }
                 ]
             }
-        }, //Microsoft.Compute/virtualMachines/vmNameDC
+        },
+        
+        //---------------------------------------
+        //VMs
+        //---------------------------------------
+        
+        //DC
+        
+        //Microsoft.Compute/virtualMachines/vmDCName
         {
-            "name": "[variables('vmNameDC')]",
+            "name": "[variables('vmDCName')]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-12-01",
             "location": "[parameters('ResourceGroup')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmNicNameDC'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmDCNicName'))]",
                 "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]",
                 "[resourceId('Microsoft.Network/loadBalancers', variables('lbName'))]"
             ],
@@ -386,19 +415,19 @@
                     "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]"
                 },
                 "osProfile": {
-                    "computerName":     "[variables('vmNameDC')]",
+                    "computerName":     "[variables('vmDCName')]",
                     "adminUsername":    "[parameters('adminUsername')]",
                     "adminPassword":    "[parameters('adminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher":    "[variables('osImagePublisherServer')]",
-                        "offer":        "[variables('osImageOfferServer')]",
-                        "sku":          "[variables('osImageSKUServer')]",
+                        "publisher":    "[variables('vmDCImagePublisher')]",
+                        "offer":        "[variables('vmDCImageOffer')]",
+                        "sku":          "[variables('vmDCImageSKU')]",
                         "version":      "latest"
                     },
                     "osDisk": {
-                        "name":         "[concat(variables('vmNameDC'),'_OSDisk')]",
+                        "name":         "[concat(variables('vmDCName'),'_OSDisk')]",
                         "caching":      "ReadWrite",
                         "createOption": "FromImage",
                         "managedDisk": {
@@ -409,7 +438,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmNicNameDC'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmDCNicName'))]"
                         }
                     ]
                 }
@@ -421,7 +450,7 @@
                     "apiVersion": "2019-12-01",
                     "location": "[parameters('ResourceGroup')]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', variables('vmNameDC'))]"
+                        "[resourceId('Microsoft.Compute/virtualMachines', variables('vmDCName'))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Powershell",
@@ -429,8 +458,8 @@
                         "typeHandlerVersion": "2.19",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
-                            "ModulesUrl": "[variables('vmModulesURLDC')]",
-                            "ConfigurationFunction": "[variables('vmFunctionConfigurationDC')]",
+                            "ModulesUrl": "[variables('vmDCModulesURL')]",
+                            "ConfigurationFunction": "[variables('vmDCFunctionConfiguration')]",
                             "Properties": {
                                 "DomainName": "[parameters('domainName')]",
                                 "AdminCreds": {
@@ -447,13 +476,14 @@
                     }
                 }             
             ]
-        }, //Microsoft.Resources/deployments/UpdateVNetDNS1
+        },
+        //Microsoft.Resources/deployments/UpdateVNetDNS1
         {
             "name": "UpdateVNetDNS",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
-                //"[resourceId('Microsoft.Compute/virtualMachines', variables('vmNameDC'))]"
+                //"[resourceId('Microsoft.Compute/virtualMachines', variables('vmDCName'))]"
                 "CreateADForest"
             ],
             "properties": {
@@ -480,18 +510,19 @@
                     },
                     "DNSServerAddress": {
                         "value": [
-                            "[variables('vmNicIpAddressDC')]"
+                            "[variables('vmDCNicIPAddress')]"
                         ]
                     }
                 }
             }
-        }, //Microsoft.Resources/deployments/UpdateNICSRV
+        },
+        //Microsoft.Resources/deployments/UpdateNICSRV
         {
             "name": "UpdateNICSRV",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
-                "[variables('vmNicNameSRV')]",
+                "[variables('vmSRVNicName')]",
                 "UpdateVNetDNS"
             ],
             "properties": {
@@ -505,7 +536,7 @@
                         "value": "[parameters('ResourceGroup')]"
                     },
                     "nicName": {
-                        "value": "[variables('vmNicNameSRV')]"
+                        "value": "[variables('vmSRVNicName')]"
                     },
                     "ipConfigurations": {
                         "value": [
@@ -513,7 +544,7 @@
                                 "name": "ipconfig1",
                                 "properties": {
                                     "privateIPAllocationMethod": "Static",
-                                    "privateIPAddress": "[variables('vmNicIPAddressSRV')]",
+                                    "privateIPAddress": "[variables('vmSRVNicIPAddress')]",
                                     "subnet": {
                                         "id": "[variables('netSubnetRef')]"
                                     },
@@ -524,7 +555,7 @@
                                     ],
                                     "loadBalancerInboundNatRules": [
                                         {
-                                            "id": "[variables('vmRdpNATRuleIDSRV')]"
+                                            "id": "[variables('vmSRVRdpNATRuleID')]"
                                         }
                                     ]
                                 }
@@ -533,18 +564,19 @@
                     },
                     "dnsServers": {
                         "value": [
-                            "[variables('vmNicIpAddressDC')]"
+                            "[variables('vmDCNicIPAddress')]"
                         ]
                     }
                 }
             }
-        }, //Microsoft.Resources/deployments/UpdateNICCLIENT
+        },
+        //Microsoft.Resources/deployments/UpdateNICCLIENT
         {
             "name": "UpdateNICCLIENT",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
-                "[variables('vmNicNameCLIENT')]",
+                "[variables('vmCLIENTNicName')]",
                 "UpdateVNetDNS"
             ],
             "properties": {
@@ -558,7 +590,7 @@
                         "value": "[parameters('ResourceGroup')]"
                     },
                     "nicName": {
-                        "value": "[variables('vmNicNameCLIENT')]"
+                        "value": "[variables('vmCLIENTNicName')]"
                     },
                     "ipConfigurations": {
                         "value": [
@@ -566,7 +598,7 @@
                                 "name": "ipconfig1",
                                 "properties": {
                                     "privateIPAllocationMethod": "Static",
-                                    "privateIPAddress": "[variables('vmNicIPAddressCLIENT')]",
+                                    "privateIPAddress": "[variables('vmCLIENTNicIPAddress')]",
                                     "subnet": {
                                         "id": "[variables('netSubnetRef')]"
                                     },
@@ -577,7 +609,7 @@
                                     ],
                                     "loadBalancerInboundNatRules": [
                                         {
-                                            "id": "[variables('vmRdpNATRuleIDCLIENT')]"
+                                            "id": "[variables('vmCLIENTdpNATRuleID')]"
                                         }
                                     ]
                                 }
@@ -586,19 +618,23 @@
                     },
                     "dnsServers": {
                         "value": [
-                            "[variables('vmNicIpAddressDC')]"
+                            "[variables('vmDCNicIPAddress')]"
                         ]
                     }
                 }
             }
-        }, //Microsoft.Compute/virtualMachines/vmNameSRV
+        },
+        
+        //SRV
+
+        //Microsoft.Compute/virtualMachines/vmSRVName
         {
-            "name": "[variables('vmNameSRV')]",
+            "name": "[variables('vmSRVName')]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-12-01",
             "location": "[parameters('ResourceGroup')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmNicNameSRV'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmSRVNicName'))]",
                 "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]",
                 "[resourceId('Microsoft.Network/loadBalancers', variables('lbName'))]"
             ],
@@ -610,19 +646,19 @@
                     "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]"
                 },
                 "osProfile": {
-                    "computerName": "[variables('vmNameSRV')]",
+                    "computerName": "[variables('vmSRVName')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[variables('osImagePublisherServer')]",
-                        "offer": "[variables('osImageOfferServer')]",
-                        "sku": "[variables('osImageSKUServer')]",
+                        "publisher": "[variables('vmSRVImagePublisher')]",
+                        "offer": "[variables('vmSRVImageOffer')]",
+                        "sku": "[variables('vmSRVImageSKU')]",
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[concat(variables('vmNameSRV'),'_osdisk')]",
+                        "name": "[concat(variables('vmSRVName'),'_osdisk')]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
                         "managedDisk": {
@@ -633,19 +669,20 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('vmNicNameSRV'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('vmSRVNicName'))]"
                         }
                     ]
                 }
             }
-        }, //Microsoft.Compute/virtualMachines/extensions/vmNameSRV/PrepareSRV
+        },
+        //Microsoft.Compute/virtualMachines/extensions/vmSRVName/PrepareSRV
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('vmNameSRV'),'/PrepareSRV')]",
+            "name": "[concat(variables('vmSRVName'),'/PrepareSRV')]",
             "apiVersion": "2019-12-01",
             "location": "[parameters('ResourceGroup')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', variables('vmNameSRV'))]"
+                "[resourceId('Microsoft.Compute/virtualMachines', variables('vmSRVName'))]"
             ],
             "properties": {
                 "publisher": "Microsoft.Powershell",
@@ -653,31 +690,32 @@
                 "typeHandlerVersion": "2.19",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "ModulesUrl": "[variables('vmModulesURLPreparationServer')]",
-                    "ConfigurationFunction": "[variables('vmFunctionPreparationSRV')]",
+                    "ModulesUrl": "[variables('vmSRVModulesURLPreparation')]",
+                    "ConfigurationFunction": "[variables('vmSRVFunctionPreparation')]",
                     "Properties": {
-                        "DNSServer": "[variables('vmNicIpAddressDC')]"
+                        "DNSServer": "[variables('vmDCNicIPAddress')]"
                     }
                 }
             }
-        }, //Microsoft.Resources/deployments/ConfigSRV
+        },
+        //Microsoft.Resources/deployments/ConfigSRV
         {
             "name": "ConfigSRV",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmNameSRV'),'PrepareSRV')]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmSRVName'),'PrepareSRV')]",
                 "[resourceId('Microsoft.Resources/deployments', 'UpdateNICSRV')]"
             ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('vmTemplateUriConfigureSRV')]",
+                    "uri": "[variables('vmSRVTemplateUriConfigure')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "Name": {
-                        "value": "[variables('vmNameSRV')]"
+                        "value": "[variables('vmSRVName')]"
                     },
                     "location": {
                         "value": "[parameters('ResourceGroup')]"
@@ -692,21 +730,25 @@
                         "value": "[parameters('domainName')]"
                     },
                     "ConfigFunction": {
-                        "value": "[variables('vmFunctionConfigurationSRV')]"
+                        "value": "[variables('vmSRVFunctionConfiguration')]"
                     },
                     "ConfigModulesURL": {
-                        "value": "[variables('vmModulesURLConfigurationSRV')]"
+                        "value": "[variables('vmSRVModulesURLConfiguration')]"
                     }
                 }
             }
-        }, //MMicrosoft.Compute/virtualMachines/vmNameCLIENT
+        },
+
+        //CLIENT
+
+        //Microsoft.Compute/virtualMachines/vmCLIENTName
         {
-            "name": "[variables('vmNameCLIENT')]",
+            "name": "[variables('vmCLIENTName')]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-12-01",
             "location": "[parameters('ResourceGroup')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmNicNameCLIENT'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmCLIENTNicName'))]",
                 "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]",
                 "[resourceId('Microsoft.Network/loadBalancers', variables('lbName'))]"
             ],
@@ -718,19 +760,19 @@
                     "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]"
                 },
                 "osProfile": {
-                    "computerName": "[variables('vmNameCLIENT')]",
+                    "computerName": "[variables('vmCLIENTName')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[variables('osImagePublisherServer')]",
-                        "offer": "[variables('osImageOfferServer')]",
-                        "sku": "[variables('osImageSKUServer')]",
+                        "publisher": "[variables('vmCLIENTImagePublisher')]",
+                        "offer": "[variables('vmCLIENTImageOffer')]",
+                        "sku": "[variables('vmCLIENTImageSKU')]",
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[concat(variables('vmNameCLIENT'),'_osdisk')]",
+                        "name": "[concat(variables('vmCLIENTName'),'_osdisk')]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
                         "managedDisk": {
@@ -741,19 +783,20 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('vmNicNameCLIENT'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('vmCLIENTNicName'))]"
                         }
                     ]
                 }
             }
-        }, //Microsoft.Compute/virtualMachines/extensions/vmNameCLIENT/PrepareClient
+        },
+        //Microsoft.Compute/virtualMachines/extensions/vmCLIENTName/PrepareClient
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('vmNameCLIENT'),'/PrepareClient')]",
+            "name": "[concat(variables('vmCLIENTName'),'/PrepareClient')]",
             "apiVersion": "2019-12-01",
             "location": "[parameters('ResourceGroup')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', variables('vmNameCLIENT'))]"
+                "[resourceId('Microsoft.Compute/virtualMachines', variables('vmCLIENTName'))]"
             ],
             "properties": {
                 "publisher": "Microsoft.Powershell",
@@ -761,31 +804,32 @@
                 "typeHandlerVersion": "2.19",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "ModulesUrl": "[variables('vmModulesURLPreparationCLIENT')]",
-                    "ConfigurationFunction": "[variables('vmFunctionPreparationCLIENT')]",
+                    "ModulesUrl": "[variables('vmCLIENTModulesURLPreparation')]",
+                    "ConfigurationFunction": "[variables('vmCLIENTFunctionPreparation')]",
                     "Properties": {
-                        "DNSServer": "[variables('vmNicIpAddressDC')]"
+                        "DNSServer": "[variables('vmDCNicIPAddress')]"
                     }
                 }
             }
-        }, //Microsoft.Resources/deployments/ConfigClient
+        },
+        //Microsoft.Resources/deployments/ConfigClient
         {
             "name": "ConfigClient",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-09-01",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', 'UpdateNICCLIENT')]",
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmNameCLIENT'), 'PrepareCLIENT')]"
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmCLIENTName'), 'PrepareCLIENT')]"
             ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('vmTemplateUriConfigureCLIENT')]",
+                    "uri": "[variables('vmCLIENTTemplateUriConfigure')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "Name": {
-                        "value": "[variables('vmNameCLIENT')]"
+                        "value": "[variables('vmCLIENTName')]"
                     },
                     "location": {
                         "value": "[parameters('ResourceGroup')]"
@@ -800,10 +844,10 @@
                         "value": "[parameters('domainName')]"
                     },
                     "ConfigFunction": {
-                        "value": "[variables('vmFunctionConfigurationCLIENT')]"
+                        "value": "[variables('vmCLIENTFunctionConfiguration')]"
                     },
                     "ConfigModulesURL": {
-                        "value": "[variables('vmModulesURLConfigurationCLIENT')]"
+                        "value": "[variables('vmCLIENTModulesURLConfiguration')]"
                     }
                 }
             }
