@@ -445,7 +445,7 @@
             }
         },
         {
-            "name":                          "[concat(variables('vmSRVName'),'CreateADForest')]",
+            "name":                          "[concat(variables('vmSRVName'),'/CreateADForest')]",
             "type":                          "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion":                    "2019-12-01",
             "location":                      "[parameters('ResourceGroup')]",
