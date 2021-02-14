@@ -84,7 +84,7 @@
         "storageAccountType":            "Premium_LRS",
         "vmNameDC":                      "PSDC",
         "vmNameSRV":                     "PSSRV",
-        "vmNameCLIENT":                  "PSCLIENT",
+        "vmNameCLIENT":                  "PSADM",
          
         "imagePublisherServer":          "MicrosoftWindowsServer",
         "imageOfferServer":              "WindowsServer",
