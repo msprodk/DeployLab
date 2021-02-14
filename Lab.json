@@ -452,6 +452,7 @@
                     "apiVersion": "2019-12-01",
                     "location": "[parameters('ResourceGroup')]",
                     "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', variables('vmNameDC'))]",
                         "CreateADForest"
                     ],
                     "properties": {
