@@ -3,80 +3,80 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "adminUsername": {
-            "type": "string",
+            "type":         "string",
             "defaultValue": "Install",
             "metadata": {
-                "description": "The name of the Administrator of the new VM and Domain"
+                "description": "The name of the Administrator of the new Domain"
             }
         },
         "adminPassword": {
-            "type": "securestring",
+            "type":         "securestring",
             "defaultValue": "Somepass1234",
             "metadata": {
-                "description": "The password for the Administrator account of the new VM and Domain"
+                "description": "The password for the Administrator account of the new Domain"
             }
         },
         "domainName": {
-            "type": "string",
+            "type":         "string",
             "defaultValue": "ps.dom",
             "metadata": {
                 "description": "The FQDN of the AD Domain created "
             }
         },
         "dnsPrefix": {
-            "type": "string",
+            "type":         "string",
             "defaultValue": "msprotest1pub",
             "metadata": {
                 "description": "The DNS prefix for the public IP address used by the Load Balancer"
             }
         },
         "RDPPortDC": {
-            "type": "int",
+            "type":         "int",
             "metadata": {
-                "description": "The public RDP port for the PDC VM"
+                "description": "The public RDP port for the DC"
             },
             "defaultValue": 3389
         },
         "RDPPortSrv": {
-            "type": "int",
+            "type":         "int",
             "metadata": {
-                "description": "The public RDP port for the BDC VM"
+                "description": "The public RDP port for the Member Server"
             },
             "defaultValue": 3390
         },
         "RDPPortClient": {
-            "type": "int",
+            "type":         "int",
             "metadata": {
-                "description": "The public RDP port for the BDC VM"
+                "description": "The public RDP port for the Adm Machine"
             },
             "defaultValue": 3391
         },
         "_artifactsLocation": {
-            "type": "string",
+            "type":         "string",
             "metadata": {
                 "description": "The location of resources, such as templates and DSC modules, that the template depends on"
             },
             "defaultValue": "[deployment().properties.templateLink.uri]"
         },
         "_artifactsLocationSasToken": {
-            "type": "securestring",
+            "type":         "securestring",
             "metadata": {
                 "description": "Auto-generated token to access _artifactsLocation"
             },
             "defaultValue": ""
         },
         "ResourceGroup": {
-            "type": "string",
+            "type":         "string",
             "defaultValue": "[resourceGroup().location]",
             "metadata": {
-                "description": "ResourceGroup for all resources."
+                "description": "Resource Group for all resources"
             }
         },
-        "adVMSize": {
-            "type": "string",
+        "vmSize": {
+            "type":         "string",
             "defaultValue": "Standard_DS2_v2",
             "metadata": {
-                "description": "Size for the VM.  This sample uses premium disk and requires an 'S' sku."
+                "description": "Size of the VMs. This sample uses premium disk and requires an 'S' sku."
             }
         }
     },
@@ -117,8 +117,8 @@
         "vmDCImagePublisher":              "MicrosoftWindowsServer",
         "vmDCImageOffer":                  "WindowsServer",
         "vmDCImageSKU":                    "2019-Datacenter",
-        "vmDCNatRdp":                      "DC-rdp",
-        "vmDCNicName":                     "DC-nic",
+        "vmDCNatRdp":                      "PSDC-rdp",
+        "vmDCNicName":                     "PSDC-nic",
         "vmDCNicIPAddress":                "10.200.0.4",
         "vmDCRdpNATRuleID":                "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('lbName'), variables('vmDCNatRdp'))]",
         "vmDCModulesURL":                  "[uri(parameters('_artifactsLocation'), concat('DSC/ConfigDC.zip', parameters('_artifactsLocationSasToken')))]",
@@ -129,8 +129,8 @@
         "vmSRVImagePublisher":             "MicrosoftWindowsServer",
         "vmSRVImageOffer":                 "WindowsServer",
         "vmSRVImageSKU":                   "2019-Datacenter",
-        "vmSRVNatRdp":                     "SRV-rdp",
-        "vmSRVNicName":                    "SRV-nic",
+        "vmSRVNatRdp":                     "PSSRV-rdp",
+        "vmSRVNicName":                    "PSSRV-nic",
         "vmSRVNicIPAddress":               "10.200.0.5",
         "vmSRVRdpNATRuleID":               "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('lbName'), variables('vmSRVNatRdp'))]",
         "vmSRVModulesURLPreparation":      "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareSRV.zip', parameters('_artifactsLocationSasToken')))]",
@@ -144,8 +144,8 @@
         "vmCLIENTImagePublisher":          "MicrosoftWindowsServer",
         "vmCLIENTImageOffer":              "WindowsServer",
         "vmCLIENTImageSKU":                "2019-Datacenter",
-        "vmCLIENTNatRdp":                  "CLIENT-rdp",
-        "vmCLIENTNicName":                 "CLIENT-nic",
+        "vmCLIENTNatRdp":                  "PSADM-rdp",
+        "vmCLIENTNicName":                 "PSADM-nic",
         "vmCLIENTNicIPAddress":            "10.200.0.6",
         "vmCLIENTdpNATRuleID":             "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('lbName'), variables('vmCLIENTNatRdp'))]",
         "vmCLIENTModulesURLPreparation":   "[uri(parameters('_artifactsLocation'), concat('DSC/PrepareCLIENT.zip', parameters('_artifactsLocationSasToken')))]",
@@ -404,12 +404,12 @@
             "location": "[parameters('ResourceGroup')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('vmDCNicName'))]",
-                "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]",
-                "[resourceId('Microsoft.Network/loadBalancers', variables('lbName'))]"
+                "[resourceId('Microsoft.Compute/availabilitySets',  variables('netAvailabilitySetName'))]",
+                "[resourceId('Microsoft.Network/loadBalancers',     variables('lbName'))]"
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize":           "[parameters('adVMSize')]"
+                    "vmSize":           "[parameters('vmSize')]"
                 },
                 "availabilitySet": {
                     "id":               "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]"

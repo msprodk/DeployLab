@@ -162,7 +162,7 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "[parameters('adVMSize')]"
+                    "vmSize": "[parameters('vmSize')]"
                 },
                 "availabilitySet": {
                     "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]"
@@ -276,7 +276,7 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "[parameters('adVMSize')]"
+                    "vmSize": "[parameters('vmSize')]"
                 },
                 "availabilitySet": {
                     "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('netAvailabilitySetName'))]"
